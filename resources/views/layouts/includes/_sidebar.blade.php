@@ -9,6 +9,10 @@
                     <div class="nav-link-icon"><i class="fas fa-fw fa-home"></i></div>
                     Home
                 </a>
+                <a class="nav-link" href="{{url('/pallet')}}">
+                    <div class="nav-link-icon"><i class="fas fa-pallet"></i></div>
+                    Pallet Tracing
+                </a>
                 @if(\Auth::user()->role === 'Super Admin')
                 <!-- Sidenav Menu Heading (Core)-->
                 <div class="sidenav-menu-heading">Configuration</div>
