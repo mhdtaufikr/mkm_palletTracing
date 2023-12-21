@@ -15,10 +15,11 @@ class CreatePalletsTable extends Migration
     {
         Schema::create('pallets', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
+            $table->string('no_delivery');
             $table->string('no_pallet');
             $table->string('type_pallet');
             $table->string('destination');
+            $table->date('date');
             $table->timestamps();
         });
     }

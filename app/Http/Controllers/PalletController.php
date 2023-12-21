@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\Pallet;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+use App\Exports\ExcelExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PalletImport;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class PalletController extends Controller
 {
@@ -16,7 +21,8 @@ class PalletController extends Controller
 
         // Fetch pallet data for the current date
         /* $palletData = Pallet::whereDate('date', $currentDate)->get(); */
-        $palletData = Pallet::get();
+        $palletData = Pallet::groupBy('no_delivery')
+        ->get();
         $typePallet = Dropdown::where('category','Type Pallet')->get();
         $destinationPallet = Dropdown::where('category','Destination')->get();
         return view("pallet.index", compact("palletData","typePallet","destinationPallet"));
@@ -110,6 +116,39 @@ class PalletController extends Controller
         // Optionally, you can add additional logic or events here
     
         return redirect()->back()->with('status', 'Pallet deleted successfully');
+    }
+
+    public function excelFormat()
+    {
+        return Excel::download(new ExcelExport, 'Format Pallet Import.xlsx');
+    }
+
+    public function excelData(Request $request)
+    {
+        $request->validate([
+            'excel-file' => 'required|file|mimes:xlsx',
+        ]);
+
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+
+            // Import data using AssetImport class
+            Excel::import(new PalletImport, $request->file('excel-file'));
+
+            // If everything is successful, commit the transaction
+            DB::commit();
+
+            return redirect()->back()->with('status', 'Pallets imported successfully');
+        } catch (Throwable $e) {
+            // If an error occurs, rollback the transaction
+            DB::rollBack();
+
+            // Log or handle the error as needed
+            // You can also use $e->getMessage() to get the error message
+
+            return redirect()->back()->with('failed', 'Error importing Pallet. Please check the data format.');
+        }
     }
     
 }

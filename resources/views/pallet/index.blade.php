@@ -50,6 +50,9 @@
                         <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
                             <i class="fas fa-plus-square"></i> 
                           </button>
+                          <button  title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
+                            Import Assets 
+                          </button>
                           
                           <!-- Modal -->
                           <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
@@ -94,6 +97,39 @@
                               </div>
                             </div>
                           </div>
+
+                          <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modal-add-label">Import Asset</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url('/pallet/import') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control" id="csvFile" name="excel-file" accept=".csv">
+                                                <p class="text-danger">*file must be xlsx</p>
+                                            </div>
+
+                                            @error('excel-file')
+                                                <div class="alert alert-danger" role="alert">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{{ url('/pallet/download/format') }}" class="btn btn-link">
+                                                Download Excel Format
+                                            </a>
+                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                           
 
                     <div class="col-sm-12">
@@ -133,7 +169,7 @@
                   <thead>
                   <tr>
                     <th>No</th>
-                    <th>No. Pallet</th>
+                    <th>No. Delivery</th>
                     <th>Type Pallet</th>
                     <th>Destination</th>
                     <th>Date</th>
@@ -147,15 +183,18 @@
                     @foreach ($palletData as $data)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $data->no_pallet }}</td>
+                        <td>{{ $data->no_delivery }}</td>
                         <td>{{ $data->type_pallet }}</td>
                         <td>{{ $data->destination }}</td>
                         <td>{{ $data->date }}</td>
                         <td>
-                            <button title="Edit Dropdown" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                            <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-edit"></i>
                               </button>
-                            <button title="Delete Dropdown" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                              <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
+                                <i class="fas fa-info"></i>
+                              </button>
+                            <button title="Delete Pallet" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                                 <i class="fas fa-trash-alt"></i>
                               </button>   
                         </td>

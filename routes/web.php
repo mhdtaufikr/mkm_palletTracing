@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pallet/store', [PalletController::class, 'store'])->middleware(['checkRole:Super Admin']);
     Route::patch('/pallet/update/{id}', [PalletController::class, 'update'])->middleware(['checkRole:Super Admin']);
     Route::delete('/pallet/delete/{id}', [PalletController::class, 'delete'])->middleware(['checkRole:Super Admin']);
+    Route::get('/pallet/download/format', [PalletController::class, 'excelFormat'])->middleware(['checkRole:Super Admin']);
+    Route::post('/pallet/import', [PalletController::class, 'excelData'])->middleware(['checkRole:Super Admin']);
 
      //Dropdown Controller
      Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:Super Admin']);
