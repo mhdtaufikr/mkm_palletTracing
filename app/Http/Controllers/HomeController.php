@@ -33,8 +33,8 @@ class HomeController extends Controller
 
         // Pass the data to the view
         return view('home.index', [
-            'enginePieData' => json_encode($counts['ENGINE'] ?? []),
-            'transmissionPieData' => json_encode($counts['TM - Assy'] ?? []),
+            'enginePieData' => json_encode($counts['Engine'] ?? []),
+            'transmissionPieData' => json_encode($counts['TM-Assy'] ?? []),
             'faPieData' => json_encode($counts['FA'] ?? []),
         ]);
     }

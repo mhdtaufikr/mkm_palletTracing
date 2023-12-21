@@ -15,18 +15,30 @@ use Throwable;
 
 class PalletController extends Controller
 {
-    public function index(){
+
+    public function index()
+    {
         // Get the current date
         $currentDate = Carbon::now()->format('Y-m-d');
-
-        // Fetch pallet data for the current date
-        /* $palletData = Pallet::whereDate('date', $currentDate)->get(); */
-        $palletData = Pallet::groupBy('no_delivery')
-        ->get();
-        $typePallet = Dropdown::where('category','Type Pallet')->get();
-        $destinationPallet = Dropdown::where('category','Destination')->get();
-        return view("pallet.index", compact("palletData","typePallet","destinationPallet"));
+    
+        // Fetch pallet data grouped by no_delivery
+        $palletData = Pallet::groupBy('no_delivery')->get();
+    
+        // Fetch all no_pallet values for each no_delivery
+        $palletDetails = [];
+        foreach ($palletData as $data) {
+            $noDelivery = $data->no_delivery;
+            $palletDetails[$noDelivery] = Pallet::where('no_delivery', $noDelivery)->pluck('no_pallet')->toArray();
+        }
+    
+        // Fetch dropdown data
+        $typePallet = Dropdown::where('category', 'Type Pallet')->get();
+        $destinationPallet = Dropdown::where('category', 'Destination')->get();
+    
+        // Pass the data to the view
+        return view("pallet.index", compact("palletData", "palletDetails", "typePallet", "destinationPallet"));
     }
+    
 
 
 
@@ -34,6 +46,7 @@ class PalletController extends Controller
     {
         // Validate the request data
         $request->validate([
+            'no_delivery' => 'required|string|max:255',
             'date' => 'required|date',
             'no_pallet' => [
                 'required',
@@ -52,6 +65,7 @@ class PalletController extends Controller
 
         // Create a new Pallet instance and fill it with the request data
         $pallet = new Pallet([
+            'no_delivery' => $request->input('no_delivery'),
             'date' => $request->input('date'),
             'no_pallet' => $request->input('no_pallet'),
             'type_pallet' => $request->input('type_pallet'),
@@ -70,6 +84,7 @@ class PalletController extends Controller
     {
         // Validate the request data
         $request->validate([
+            'no_delivery' => 'required|string|max:255',
             'date' => 'required|date',
             'no_pallet' => 'required|string|max:255',
             'type_pallet' => 'required|string|max:255',
@@ -84,6 +99,7 @@ class PalletController extends Controller
     
         // Update the Pallet with the new data
         $pallet->update([
+            'no_delivery' => $request->input('no_delivery'),
             'date' => $request->input('date'),
             'no_pallet' => $request->input('no_pallet'),
             'type_pallet' => $request->input('type_pallet'),

@@ -66,6 +66,9 @@
                                   @csrf
                                   <div class="modal-body">
                                     <div class="form-group mb-3">
+                                      <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                    </div>
+                                    <div class="form-group mb-3">
                                       <input type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Pallet" required>
                                     </div>
                                     <div class="form-group mb-3">
@@ -191,14 +194,36 @@
                             <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-edit"></i>
                               </button>
-                              <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
-                                <i class="fas fa-info"></i>
-                              </button>
+                            <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
+                              <i class="fas fa-info"></i>
+                          </button>
                             <button title="Delete Pallet" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                                 <i class="fas fa-trash-alt"></i>
                               </button>   
                         </td>
                     </tr>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="modal-detail{{ $data->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Details for No. Delivery: {{ $data->no_delivery }}</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <!-- Display Details Here -->
+                                  @foreach($palletDetails[$data->no_delivery] as $pallet)
+                                      <p>No. Pallet: {{ $pallet }}</p>
+                                  @endforeach
+                                  <!-- Add other details you want to display -->
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
 
                     {{-- Modal Update --}}
                     <div class="modal fade" id="modal-update{{ $data->id }}" tabindex="-1" aria-labelledby="modal-update{{ $data->id }}-label" aria-hidden="true">

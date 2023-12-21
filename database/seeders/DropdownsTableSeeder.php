@@ -58,8 +58,15 @@ class DropdownsTableSeeder extends Seeder
             ],
             [
                 'category' => 'Type Pallet',
-                'name_value' => 'Transmission',
+                'name_value' => 'TM-Assy',
                 'code_format' => 'TS',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'category' => 'Type Pallet',
+                'name_value' => 'FA',
+                'code_format' => 'FA',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
