@@ -38,18 +38,14 @@ class PalletController extends Controller
         // Pass the data to the view
         return view("pallet.index", compact("palletData", "palletDetails", "typePallet", "destinationPallet"));
     }
-    
-
-
-
-    public function store(Request $request)
+        public function store(Request $request)
     {
         // Validate the request data
         $request->validate([
             'no_delivery' => 'required|string|max:255',
             'date' => 'required|date',
-            'no_pallet' => [
-                'required',
+            'no_pallet' => 'required|array',
+            'no_pallet.*' => [
                 'string',
                 'max:255',
                 Rule::unique('pallets', 'no_pallet'), // Ensure no_pallet is unique in the pallets table
@@ -58,68 +54,69 @@ class PalletController extends Controller
             'destination' => 'required|string|max:255',
         ]);
 
-        // Check if a pallet with the same number already exists
-        if (Pallet::where('no_pallet', $request->input('no_pallet'))->exists()) {
-            return redirect()->back()->with('error', 'Pallet number already exists')->withInput();
+        // Create an array to store pallet data
+        $palletsData = [];
+
+        // Iterate through each "No. Pallet" value and create Pallet instances
+        foreach ($request->input('no_pallet') as $noPallet) {
+            $palletsData[] = [
+                'no_delivery' => $request->input('no_delivery'),
+                'date' => $request->input('date'),
+                'no_pallet' => $noPallet,
+                'type_pallet' => $request->input('type_pallet'),
+                'destination' => $request->input('destination'),
+            ];
         }
 
-        // Create a new Pallet instance and fill it with the request data
-        $pallet = new Pallet([
-            'no_delivery' => $request->input('no_delivery'),
-            'date' => $request->input('date'),
-            'no_pallet' => $request->input('no_pallet'),
-            'type_pallet' => $request->input('type_pallet'),
-            'destination' => $request->input('destination'),
-        ]);
+    // Insert the pallets data into the database
+    Pallet::insert($palletsData);
 
-        // Save the Pallet to the database
-        $pallet->save();
+    // Optionally, you can return a response or redirect to another page
+    return redirect()->route('pallet.index')->with('status', 'Pallets created successfully');
+}
 
-        // Optionally, you can return a response or redirect to another page
-        return redirect()->route('pallet.index')->with('status', 'Pallet created successfully');
-    }
 
 
     public function update(Request $request, $id)
-    {
-        // Validate the request data
-        $request->validate([
-            'no_delivery' => 'required|string|max:255',
-            'date' => 'required|date',
-            'no_pallet' => 'required|string|max:255',
-            'type_pallet' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-        ]);
-    
-        // Find the Pallet by ID
-        $pallet = Pallet::findOrFail($id);
-    
-        // Get the original attributes
-        $originalAttributes = $pallet->getOriginal();
-    
-        // Update the Pallet with the new data
-        $pallet->update([
-            'no_delivery' => $request->input('no_delivery'),
+{
+    // Validate the request data
+    $request->validate([
+        'date' => 'required|date_format:Y-m-d',
+        'type_pallet' => 'required|string|max:255',
+        'destination' => 'required|string|max:255',
+    ]);
+
+    // Find the Pallet by ID
+    $pallet = Pallet::findOrFail($id);
+
+    // Get the original attributes
+    $originalAttributes = $pallet->getOriginal();
+    $no_delivery = $originalAttributes['no_delivery'];
+
+    // Find all pallets with the given no_delivery
+    $pallets = Pallet::where('no_delivery', $no_delivery)->get();
+
+    // Check if any pallets were found
+    if ($pallets->isEmpty()) {
+        return redirect()->back()->with('failed', 'No pallets found with the specified no_delivery');
+    }
+
+    // Iterate through each pallet and update
+    foreach ($pallets as $palletToUpdate) {
+        // Update each pallet with the new data
+        $palletToUpdate->update([
             'date' => $request->input('date'),
-            'no_pallet' => $request->input('no_pallet'),
             'type_pallet' => $request->input('type_pallet'),
             'destination' => $request->input('destination'),
         ]);
-    
-        // Get the updated attributes
-        $updatedAttributes = $pallet->getAttributes();
-    
-        // Check if there are any changes
-        $changesDetected = $originalAttributes != $updatedAttributes;
-    
-        if ($changesDetected) {
-            // Optionally, you can add additional logic or events here
-    
-            return redirect()->back()->with('status', 'Pallet updated successfully');
-        } else {
-            return redirect()->back()->with('failed', 'No changes made to the Pallet');
-        }
     }
+
+    // Optionally, you can add additional logic or events here
+
+    return redirect()->back()->with('status', 'Pallets updated successfully');
+}
+
+
     
     public function delete($id)
     {

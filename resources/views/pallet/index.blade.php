@@ -55,51 +55,71 @@
                           </button>
                           
                           <!-- Modal -->
-                          <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form action="{{ url('/pallet/store') }}" method="POST">
-                                  @csrf
-                                  <div class="modal-body">
-                                    <div class="form-group mb-3">
-                                      <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                      <input type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Pallet" required>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <select name="type_pallet" id="type_pallet" class="form-control">
-                                            <option value="">- Please Select Type Pallet -</option>
-                                            @foreach ($typePallet as $type)
-                                                <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
-                                            @endforeach
-                                          </select>
-                                    </div>
-                                      <div class="form-group mb-3">
-                                        <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
+                            <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                       </div>
-                                      <div class="form-group mb-3">
-                                        <select name="destination" id="destination" class="form-control">
-                                            <option value="">- Please Select Destination -</option>
-                                            @foreach ($destinationPallet as $des)
-                                                <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
-                                            @endforeach
-                                          </select>
-                                    </div>
-                                    
+                                      <form action="{{ url('/pallet/store') }}" method="POST">
+                                          @csrf
+                                          <div class="modal-body">
+                                              <div class="form-group mb-3">
+                                                  <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                              </div>
+                                              <div class="form-group mb-3" id="noPalletContainer">
+                                                  <label for="no_pallet">No. Pallet</label>
+                                                  <div class="input-group mb-3">
+                                                      <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
+                                                      <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
+                                                  </div>
+                                              </div>
+                                              <div class="form-group mb-3">
+                                                  <select name="type_pallet" id="type_pallet" class="form-control">
+                                                      <option value="">- Please Select Type Pallet -</option>
+                                                      @foreach ($typePallet as $type)
+                                                      <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
+                                                      @endforeach
+                                                  </select>
+                                              </div>
+                                              <div class="form-group mb-3">
+                                                  <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
+                                              </div>
+                                              <div class="form-group mb-3">
+                                                  <select name="destination" id="destination" class="form-control">
+                                                      <option value="">- Please Select Destination -</option>
+                                                      @foreach ($destinationPallet as $des)
+                                                      <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
+                                                      @endforeach
+                                                  </select>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                              <button type="submit" class="btn btn-primary">Submit</button>
+                                          </div>
+                                      </form>
                                   </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                  </div>
-                                </form>
                               </div>
                             </div>
-                          </div>
+
+<script>
+  function addNoPalletField() {
+      var container = document.getElementById('noPalletContainer');
+      var inputGroup = document.createElement('div');
+      inputGroup.className = 'input-group mb-3';
+      inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
+          '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
+      container.appendChild(inputGroup);
+  }
+
+  function removeNoPalletField(button) {
+      var container = document.getElementById('noPalletContainer');
+      container.removeChild(button.parentNode);
+  }
+</script>
+
 
                           <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                             <div class="modal-dialog">
@@ -230,7 +250,7 @@
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h4 class="modal-title" id="modal-update{{ $data->id }}-label">Edit Dropdown</h4>
+                              <h4 class="modal-title" id="modal-update{{ $data->id }}-label">Edit Pallet</h4>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form action="{{ url('/pallet/update/'.$data->id) }}" method="POST">
@@ -239,7 +259,7 @@
                               <div class="modal-body">
                                 <input type="text" value="{{$data->id}}" hidden>
                                 <div class="form-group mb-3">
-                                  <input value="{{$data->no_pallet}}" type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Pallet" required>
+                                  <input value="{{$data->no_delivery}}" type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
                                 </div>
                                 <div class="form-group mb-3">
                                     <select name="type_pallet" id="type_pallet" class="form-control">
