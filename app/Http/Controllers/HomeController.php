@@ -9,8 +9,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Fetch pallet data
-        $palletData = Pallet::get();
+        // Fetch pallet data with status = 1
+        $palletData = Pallet::where('status', 1)->get();
 
         // Initialize counts array
         $counts = [];

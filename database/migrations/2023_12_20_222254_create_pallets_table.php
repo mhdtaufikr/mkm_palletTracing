@@ -20,6 +20,7 @@ class CreatePalletsTable extends Migration
             $table->string('type_pallet');
             $table->string('destination');
             $table->date('date');
+            $table->integer('status'); // New column
             $table->timestamps();
         });
     }

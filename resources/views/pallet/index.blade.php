@@ -43,16 +43,35 @@
                 <h3 class="card-title">List of Pallet</h3>
               </div>
               
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="row">
-                    <div class="mb-3 col-sm-12">
-                        <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
-                            <i class="fas fa-plus-square"></i> 
-                          </button>
-                          <button  title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
-                            Import Assets 
-                          </button>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="row">
+                  <div class="mb-3 col-sm-12">
+                      <!-- Search Form -->
+            
+                      <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
+                          <i class="fas fa-plus-square"></i> Add
+                      </button>
+                      <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
+                          Import Assets
+                      </button>
+
+                      
+                  <script>
+                    // JavaScript to toggle between input types based on the selected option
+                    document.getElementById('searchType').addEventListener('change', function () {
+                        var selectedType = this.value;
+
+                        if (selectedType === 'date') {
+                            document.getElementById('searchInputContainer').style.display = 'none';
+                            document.getElementById('dateInputContainer').style.display = 'block';
+                        } else {
+                            document.getElementById('searchInputContainer').style.display = 'block';
+                            document.getElementById('dateInputContainer').style.display = 'none';
+                        }
+                    });
+                  </script>
+
                           
                           <!-- Modal -->
                             <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
@@ -104,21 +123,21 @@
                               </div>
                             </div>
 
-<script>
-  function addNoPalletField() {
-      var container = document.getElementById('noPalletContainer');
-      var inputGroup = document.createElement('div');
-      inputGroup.className = 'input-group mb-3';
-      inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
-          '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
-      container.appendChild(inputGroup);
-  }
+                              <script>
+                                function addNoPalletField() {
+                                    var container = document.getElementById('noPalletContainer');
+                                    var inputGroup = document.createElement('div');
+                                    inputGroup.className = 'input-group mb-3';
+                                    inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
+                                        '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
+                                    container.appendChild(inputGroup);
+                                }
 
-  function removeNoPalletField(button) {
-      var container = document.getElementById('noPalletContainer');
-      container.removeChild(button.parentNode);
-  }
-</script>
+                                function removeNoPalletField(button) {
+                                    var container = document.getElementById('noPalletContainer');
+                                    container.removeChild(button.parentNode);
+                                }
+                              </script>
 
 
                           <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
@@ -193,6 +212,7 @@
                   <tr>
                     <th>No</th>
                     <th>No. Delivery</th>
+                    <th>No. Pallet</th>
                     <th>Type Pallet</th>
                     <th>Destination</th>
                     <th>Date</th>
@@ -207,13 +227,14 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $data->no_delivery }}</td>
+                        <td>{{ $data->no_pallet }}</td>
                         <td>{{ $data->type_pallet }}</td>
                         <td>{{ $data->destination }}</td>
                         <td>{{ $data->date }}</td>
                         <td>
-                            <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                            {{-- <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-edit"></i>
-                              </button>
+                              </button> --}}
                             <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
                               <i class="fas fa-info"></i>
                           </button>
@@ -228,22 +249,29 @@
                       <div class="modal-dialog">
                           <div class="modal-content">
                               <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLabel">Details for No. Delivery: {{ $data->no_delivery }}</h5>
+                                  <h5 class="modal-title" id="exampleModalLabel">Details for No. Pallet: {{ $data->no_pallet }}</h5>
                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
                                   <!-- Display Details Here -->
-                                  @foreach($palletDetails[$data->no_delivery] as $pallet)
-                                      <p>No. Pallet: {{ $pallet }}</p>
+                                  @foreach($palletData->where('no_pallet', $data->no_pallet) as $pallet)
+                                      <p>No. Delivery: {{ $pallet->no_delivery }}</p>
+                                      <p>No. Pallet: {{ $pallet->no_pallet }}</p>
+                                      <p>Type Pallet: {{ $pallet->type_pallet }}</p>
+                                      <p>Destination: {{ $pallet->destination }}</p>
+                                      <p>Date: {{ $pallet->date }}</p>
+                                      <p>Status: {{ $pallet->status }}</p>
                                   @endforeach
-                                  <!-- Add other details you want to display -->
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                               </div>
                           </div>
                       </div>
-                  </div>
+                    </div>
+
+
+
 
                     {{-- Modal Update --}}
                     <div class="modal fade" id="modal-update{{ $data->id }}" tabindex="-1" aria-labelledby="modal-update{{ $data->id }}-label" aria-hidden="true">
@@ -259,7 +287,7 @@
                               <div class="modal-body">
                                 <input type="text" value="{{$data->id}}" hidden>
                                 <div class="form-group mb-3">
-                                  <input value="{{$data->no_delivery}}" type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                  <input value="{{$data->no_pallet}}" type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Delivery" required>
                                 </div>
                                 <div class="form-group mb-3">
                                     <select name="type_pallet" id="type_pallet" class="form-control">
