@@ -5,16 +5,6 @@
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                {{-- <div class="row align-items-center justify-content-between">
-                    <div class="col-auto mt-4">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i data-feather="tool"></i></div>
-                            Dropdown App Menu
-                        </h1>
-                        <div class="page-header-subtitle">Use this blank page as a starting point for creating new pages inside your project!</div>
-                    </div>
-                    <div class="col-12 col-xl-auto mt-4">Optional page header content</div>
-                </div> --}}
             </div>
         </div>
     </header>
@@ -46,7 +36,66 @@
             <!-- /.card-header -->
             <div class="card-body">
               <div class="row">
-                  <div class="mb-3 col-sm-12">
+                <div class="mb-3 col-sm-6">
+                  <form action="{{ url('/pallet/search') }}" method="POST" id="searchForm">
+                    @csrf <!-- Include CSRF token for security -->
+                  <!-- Search Form -->
+                  <div class="input-group input-group-sm">
+                      <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs()">
+                        <option value="date">Date</option>
+                          <option value="no_pallet">No Pallet</option>
+                          
+                      </select>
+                      <input name="palletNo" type="text" class="form-control" id="searchNoPallet" placeholder="Enter search term" style="display: none;">
+                      <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date"> <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date">
+                      <button class="btn btn-dark btn-sm" type="submit" onclick="search()">Search</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+              <div class="row">
+              
+              <script>
+                function toggleSearchInputs() {
+                    var searchBy = document.getElementById('searchBy').value;
+                    var searchNoPallet = document.getElementById('searchNoPallet');
+                    var startDate = document.getElementById('startDate');
+                    var endDate = document.getElementById('endDate');
+            
+                    if (searchBy === 'no_pallet') {
+                        searchNoPallet.style.display = 'block';
+                        startDate.style.display = 'none';
+                        endDate.style.display = 'none';
+                    } else if (searchBy === 'date') {
+                        searchNoPallet.style.display = 'none';
+                        startDate.style.display = 'inline-block';
+                        endDate.style.display = 'inline-block';
+                    } else {
+                        searchNoPallet.style.display = 'none';
+                        startDate.style.display = 'none';
+                        endDate.style.display = 'none';
+                    }
+                }
+            
+                function search() {
+                    // Implement your search logic here based on selected option and input values
+                    var searchBy = document.getElementById('searchBy').value;
+                    var searchTerm;
+            
+                    if (searchBy === 'no_pallet') {
+                        searchTerm = document.getElementById('searchNoPallet').value;
+                    } else if (searchBy === 'date') {
+                        var startDate = document.getElementById('startDate').value;
+                        var endDate = document.getElementById('endDate').value;
+                        // Implement logic to use startDate and endDate for date search
+                    }
+            
+                    // Perform search operation using searchTerm
+                    console.log('Search By:', searchBy, 'Search Term:', searchTerm);
+                }
+            </script>
+            
+                  <div class="mb-3 col-sm-6">
                       <!-- Search Form -->
             
                       <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
@@ -56,7 +105,6 @@
                           Import Assets
                       </button>
 
-                      
                   <script>
                     // JavaScript to toggle between input types based on the selected option
                     document.getElementById('searchType').addEventListener('change', function () {
@@ -72,7 +120,6 @@
                     });
                   </script>
 
-                          
                           <!-- Modal -->
                             <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                               <div class="modal-dialog">
@@ -206,6 +253,10 @@
                       <!--end validasi form-->
                     </div>
                 </div>
+                  <div class="col-sm-6 text-end">
+                    <a href="{{ url('/pallet/exportexcel')}}" class="btn btn-sm btn-success">Export to Excel</a>
+                </div>
+              
                 <div class="table-responsive"> 
                 <table id="tableUser" class="table table-bordered table-striped">
                   <thead>
@@ -397,13 +448,30 @@
 </main>
 <!-- For Datatables -->
 <script>
-    $(document).ready(function() {
-      var table = $("#tableUser").DataTable({
-        "responsive": true, 
-        "lengthChange": false, 
-        "autoWidth": false,
-        // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      });
-    });
+   $(document).ready(function() {
+  var table = $("#tableUser").DataTable({
+    "responsive": true, 
+    "lengthChange": false, 
+    "autoWidth": false,
+    "buttons": [
+      {
+        extend: 'excel',
+        text: 'Export Excel',
+        className: 'btn btn-dark btn-sm',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6] // Adjust the column indices based on your table structure
+        },
+        action: function (e, dt, button, config) {
+          $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
+        }
+      },
+      // Add more buttons if needed
+    ]
+  });
+
+  // Trigger the Excel export automatically after the table is initialized
+  table.button('excel').trigger();
+});
+
   </script>
 @endsection

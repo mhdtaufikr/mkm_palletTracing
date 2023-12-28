@@ -12,31 +12,21 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PalletImport;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-
+use App\Exports\PalletExport;
 class PalletController extends Controller
 {
 
     public function index()
     {
-        // Get the current date
-        $currentDate = Carbon::now()->format('Y-m-d');
-
+       
         // Fetch pallet data grouped by no_pallet
-        $palletData = Pallet::orderBy('created_at', 'desc')->get();
-
-        // Fetch all no_delivery values for each no_pallet
-        $palletDetails = [];
-        foreach ($palletData as $data) {
-            $noPallet = $data->no_pallet;
-            $palletDetails[$noPallet] = Pallet::where('no_pallet', $noPallet)->pluck('no_delivery')->toArray();
-        }
-
+        $palletData = Pallet::orderBy('created_at', 'desc')->where('status','1')->get();
         // Fetch dropdown data
         $typePallet = Dropdown::where('category', 'Type Pallet')->get();
         $destinationPallet = Dropdown::where('category', 'Destination')->get();
 
         // Pass the data to the view
-        return view("pallet.index", compact("palletData", "palletDetails", "typePallet", "destinationPallet"));
+        return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
     }
 
 
@@ -230,5 +220,49 @@ class PalletController extends Controller
             return redirect()->back()->with('failed', 'Error importing Pallet. Please check the data format.');
         }
     }
+
+    public function palletSearch(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'searchBy' => 'required|in:no_pallet,date',
+            'palletNo' => 'nullable|string',
+            'dateFrom' => 'nullable|date',
+            'dateTo' => 'nullable|date|after_or_equal:dateFrom',
+        ]);
+        $typePallet = Dropdown::where('category', 'Type Pallet')->get();
+        $destinationPallet = Dropdown::where('category', 'Destination')->get();
+
+        // Extract request data
+        $searchBy = $request->input('searchBy');
+        $palletNo = $request->input('palletNo');
+        $dateFrom = $request->input('dateFrom');
+        $dateTo = $request->input('dateTo');
+
+        // Query based on searchBy
+        $query = Pallet::query();
+        if ($searchBy === 'no_pallet') {
+            // Search by no_pallet if palletNo is provided
+            if ($palletNo) {
+                $query->where('no_pallet', $palletNo);
+            }
+        } elseif ($searchBy === 'date' && $dateFrom && $dateTo) {
+            $query->whereBetween('date', [$dateFrom, $dateTo]);
+        }
+
+        // Add any additional conditions as needed
+
+        // Execute the query
+        $palletData = $query->get();
+
+        // Do something with the results
+        return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new PalletExport, 'pallet_data.xlsx');
+    }
+    
     
 }

@@ -26,9 +26,17 @@
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="enginePieChart" width="100%" height="50"></canvas></div>
                 </div>
-               <div class="card-footer small text-muted">Updated today at {{ now()->format('h:i A') }}</div>
+                <div class="card-footer small text-muted">
+                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+                    
+                    @foreach(json_decode($enginePieData, true) as $destination => $count)
+                        <p class="text-bold">{{ $destination }} : {{ $count }}</p>
+                    @endforeach
+
+                </div>
             </div>
         </div>
+
 
         <!-- Pie chart for 'Transmission' -->
         <div class="col-md-4">
@@ -37,7 +45,13 @@
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="transmissionPieChart" width="100%" height="50"></canvas></div>
                 </div>
-               <div class="card-footer small text-muted">Updated today at {{ now()->format('h:i A') }}</div>
+                <div class="card-footer small text-muted">
+                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+
+                    @foreach(json_decode($transmissionPieData, true) as $destination => $count)
+                        <p>{{ $destination }}: {{ $count }}</p>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -48,9 +62,16 @@
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="faPieChart" width="100%" height="50"></canvas></div>
                 </div>
-               <div class="card-footer small text-muted">Updated today at {{ now()->format('h:i A') }}</div>
+                <div class="card-footer small text-muted">
+                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+
+                    @foreach(json_decode($faPieData, true) as $destination => $count)
+                        <p>{{ $destination }}: {{ $count }}</p>
+                    @endforeach
+                </div>
             </div>
         </div>
+
 
     </div>
 </div>

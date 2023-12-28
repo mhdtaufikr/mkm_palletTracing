@@ -37,5 +37,6 @@ class HomeController extends Controller
             'transmissionPieData' => json_encode($counts['TM-Assy'] ?? []),
             'faPieData' => json_encode($counts['FA'] ?? []),
         ]);
+
     }
 }
