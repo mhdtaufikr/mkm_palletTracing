@@ -258,11 +258,6 @@ class PalletController extends Controller
         // Do something with the results
         return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
     }
-
-    public function exportExcel(Request $request)
-    {
-        return Excel::download(new PalletExport, 'pallet_data.xlsx');
-    }
     
     
 }

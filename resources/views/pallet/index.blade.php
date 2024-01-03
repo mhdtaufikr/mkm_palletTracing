@@ -94,133 +94,6 @@
                     console.log('Search By:', searchBy, 'Search Term:', searchTerm);
                 }
             </script>
-            
-                  <div class="mb-3 col-sm-6">
-                      <!-- Search Form -->
-            
-                      <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
-                          <i class="fas fa-plus-square"></i> Add
-                      </button>
-                      <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
-                          Import Assets
-                      </button>
-
-                  <script>
-                    // JavaScript to toggle between input types based on the selected option
-                    document.getElementById('searchType').addEventListener('change', function () {
-                        var selectedType = this.value;
-
-                        if (selectedType === 'date') {
-                            document.getElementById('searchInputContainer').style.display = 'none';
-                            document.getElementById('dateInputContainer').style.display = 'block';
-                        } else {
-                            document.getElementById('searchInputContainer').style.display = 'block';
-                            document.getElementById('dateInputContainer').style.display = 'none';
-                        }
-                    });
-                  </script>
-
-                          <!-- Modal -->
-                            <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
-                              <div class="modal-dialog">
-                                  <div class="modal-content">
-                                      <div class="modal-header">
-                                          <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                      </div>
-                                      <form action="{{ url('/pallet/store') }}" method="POST">
-                                          @csrf
-                                          <div class="modal-body">
-                                              <div class="form-group mb-3">
-                                                  <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
-                                              </div>
-                                              <div class="form-group mb-3" id="noPalletContainer">
-                                                  <label for="no_pallet">No. Pallet</label>
-                                                  <div class="input-group mb-3">
-                                                      <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
-                                                      <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
-                                                  </div>
-                                              </div>
-                                              <div class="form-group mb-3">
-                                                  <select name="type_pallet" id="type_pallet" class="form-control">
-                                                      <option value="">- Please Select Type Pallet -</option>
-                                                      @foreach ($typePallet as $type)
-                                                      <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
-                                                      @endforeach
-                                                  </select>
-                                              </div>
-                                              <div class="form-group mb-3">
-                                                  <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
-                                              </div>
-                                              <div class="form-group mb-3">
-                                                  <select name="destination" id="destination" class="form-control">
-                                                      <option value="">- Please Select Destination -</option>
-                                                      @foreach ($destinationPallet as $des)
-                                                      <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
-                                                      @endforeach
-                                                  </select>
-                                              </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                              <button type="submit" class="btn btn-primary">Submit</button>
-                                          </div>
-                                      </form>
-                                  </div>
-                              </div>
-                            </div>
-
-                              <script>
-                                function addNoPalletField() {
-                                    var container = document.getElementById('noPalletContainer');
-                                    var inputGroup = document.createElement('div');
-                                    inputGroup.className = 'input-group mb-3';
-                                    inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
-                                        '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
-                                    container.appendChild(inputGroup);
-                                }
-
-                                function removeNoPalletField(button) {
-                                    var container = document.getElementById('noPalletContainer');
-                                    container.removeChild(button.parentNode);
-                                }
-                              </script>
-
-
-                          <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modal-add-label">Import Asset</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form action="{{ url('/pallet/import') }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <input type="file" class="form-control" id="csvFile" name="excel-file" accept=".csv">
-                                                <p class="text-danger">*file must be xlsx</p>
-                                            </div>
-
-                                            @error('excel-file')
-                                                <div class="alert alert-danger" role="alert">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a href="{{ url('/pallet/download/format') }}" class="btn btn-link">
-                                                Download Excel Format
-                                            </a>
-                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                          
-
                     <div class="col-sm-12">
                       <!--alert success -->
                       @if (session('status'))
@@ -252,12 +125,151 @@
                         @endif
                       <!--end validasi form-->
                     </div>
-                </div>
-                  <div class="col-sm-6 text-end">
-                    <a href="{{ url('/pallet/exportexcel')}}" class="btn btn-sm btn-success">Export to Excel</a>
-                </div>
+            
               
-                <div class="table-responsive"> 
+                <div class="table-responsive">
+                  <div class="mb-3 col-sm-6">
+                    <!-- Search Form -->
+          
+                    <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
+                        <i class="fas fa-plus-square"></i>
+                    </button>
+                    <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
+                        Import Assets
+                    </button>
+
+                      <script>
+                        // JavaScript to toggle between input types based on the selected option
+                        document.getElementById('searchType').addEventListener('change', function () {
+                            var selectedType = this.value;
+
+                            if (selectedType === 'date') {
+                                document.getElementById('searchInputContainer').style.display = 'none';
+                                document.getElementById('dateInputContainer').style.display = 'block';
+                            } else {
+                                document.getElementById('searchInputContainer').style.display = 'block';
+                                document.getElementById('dateInputContainer').style.display = 'none';
+                            }
+                        });
+                      </script>
+
+                        <!-- Modal -->
+                          <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url('/pallet/store') }}" method="POST">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="form-group mb-3">
+                                                <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                            </div>
+                                            <div class="form-group mb-3" id="noPalletContainer">
+                                                <label for="no_pallet">No. Pallet</label>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
+                                                    <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <select name="type_pallet" id="type_pallet" class="form-control">
+                                                    <option value="">- Please Select Type Pallet -</option>
+                                                    @foreach ($typePallet as $type)
+                                                    <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <select name="destination" id="destination" class="form-control">
+                                                    <option value="">- Please Select Destination -</option>
+                                                    @foreach ($destinationPallet as $des)
+                                                    <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                          </div>
+
+                            <script>
+                              function addNoPalletField() {
+                                  var container = document.getElementById('noPalletContainer');
+                                  var inputGroup = document.createElement('div');
+                                  inputGroup.className = 'input-group mb-3';
+                                  inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
+                                      '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
+                                  container.appendChild(inputGroup);
+                              }
+
+                              function removeNoPalletField(button) {
+                                  var container = document.getElementById('noPalletContainer');
+                                  container.removeChild(button.parentNode);
+                              }
+                            </script>
+
+
+                        <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="modal-add-label">Import Asset</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <form action="{{ url('/pallet/import') }}" method="POST" enctype="multipart/form-data">
+                                      @csrf
+                                      <div class="modal-body">
+                                          <div class="mb-3">
+                                              <input type="file" class="form-control" id="csvFile" name="excel-file" accept=".csv">
+                                              <p class="text-danger">*file must be xlsx</p>
+                                          </div>
+
+                                          @error('excel-file')
+                                              <div class="alert alert-danger" role="alert">
+                                                  {{ $message }}
+                                              </div>
+                                          @enderror
+                                      </div>
+                                      <div class="modal-footer">
+                                          <a href="{{ url('/pallet/download/format') }}" class="btn btn-link">
+                                              Download Excel Format
+                                          </a>
+                                          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-primary">Submit</button>
+                                      </div>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                </div> 
+                <script>
+                  $(document).ready(function () {
+                      var table = $("#tableUser").DataTable({
+                          "responsive": true,
+                          "lengthChange": false,
+                          "autoWidth": true,
+                          "order": [],
+                          "dom": 'Bfrtip',
+                          "buttons": [{
+                              title: 'Pallet Tracing',
+                              text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                              extend: 'excel',
+                              className: 'btn btn-success btn-sm mb-2'
+                          }]
+                      });
+                  });
+              </script>
                 <table id="tableUser" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -447,31 +459,6 @@
      
 </main>
 <!-- For Datatables -->
-<script>
-   $(document).ready(function() {
-  var table = $("#tableUser").DataTable({
-    "responsive": true, 
-    "lengthChange": false, 
-    "autoWidth": false,
-    "buttons": [
-      {
-        extend: 'excel',
-        text: 'Export Excel',
-        className: 'btn btn-dark btn-sm',
-        exportOptions: {
-          columns: [0, 1, 2, 3, 4, 5, 6] // Adjust the column indices based on your table structure
-        },
-        action: function (e, dt, button, config) {
-          $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
-        }
-      },
-      // Add more buttons if needed
-    ]
-  });
 
-  // Trigger the Excel export automatically after the table is initialized
-  table.button('excel').trigger();
-});
 
-  </script>
 @endsection

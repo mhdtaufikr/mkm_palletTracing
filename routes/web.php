@@ -37,7 +37,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pallet/download/format', [PalletController::class, 'excelFormat'])->middleware(['checkRole:Super Admin']);
     Route::post('/pallet/import', [PalletController::class, 'excelData'])->middleware(['checkRole:Super Admin']);
     Route::post('/pallet/search', [PalletController::class, 'palletSearch'])->middleware(['checkRole:Super Admin']);
-    Route::get('/pallet/exportexcel', [PalletController::class, 'exportExcel'])->middleware(['checkRole:Super Admin']);
 
      //Dropdown Controller
      Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:Super Admin']);
