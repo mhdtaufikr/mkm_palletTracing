@@ -278,6 +278,7 @@
                     <th>Type Pallet</th>
                     <th>Destination</th>
                     <th>Date</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -293,6 +294,19 @@
                         <td>{{ $data->type_pallet }}</td>
                         <td>{{ $data->destination }}</td>
                         <td>{{ \Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
+                        <td>
+                          @if($data->status == 1)
+                              <!-- Button for active status -->
+                              <button class="btn btn-success btn-sm">
+                                  New
+                              </button>
+                          @else
+                              <!-- Button for disposal status -->
+                              <button class="btn btn-danger btn-sm">
+                                  <i class="fa-solid fa-x"></i> Expired
+                              </button>
+                          @endif
+                        </td>
                         <td>
                             <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-edit"></i>
