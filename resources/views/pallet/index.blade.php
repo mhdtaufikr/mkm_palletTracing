@@ -114,7 +114,7 @@
                       <!--validasi form-->
                         @if (count($errors)>0)
                           <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                               <ul>
                                   <li><strong>Data Process Failed !</strong></li>
                                   @foreach ($errors->all() as $error)
@@ -168,7 +168,6 @@
                                                 <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
                                             </div>
                                             <div class="form-group mb-3" id="noPalletContainer">
-                                                <label for="no_pallet">No. Pallet</label>
                                                 <div class="input-group mb-3">
                                                     <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
                                                     <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
@@ -258,7 +257,7 @@
                       var table = $("#tableUser").DataTable({
                           "responsive": true,
                           "lengthChange": false,
-                          "autoWidth": true,
+                          "autoWidth": false,
                           "order": [],
                           "dom": 'Bfrtip',
                           "buttons": [{
@@ -293,11 +292,11 @@
                         <td>{{ $data->no_pallet }}</td>
                         <td>{{ $data->type_pallet }}</td>
                         <td>{{ $data->destination }}</td>
-                        <td>{{ $data->date }}</td>
+                        <td>{{ \Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
                         <td>
-                            {{-- <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                            <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-edit"></i>
-                              </button> --}}
+                              </button>
                             <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
                               <i class="fas fa-info"></i>
                           </button>
@@ -322,7 +321,7 @@
                                       <p>No. Pallet: {{ $pallet->no_pallet }}</p>
                                       <p>Type Pallet: {{ $pallet->type_pallet }}</p>
                                       <p>Destination: {{ $pallet->destination }}</p>
-                                      <p>Date: {{ $pallet->date }}</p>
+                                      <p>Date: {{ \Carbon\Carbon::parse($pallet->date)->format('d-m-Y') }}</p>
                                       <p>Status: {{ $pallet->status }}</p>
                                   @endforeach
                               </div>
@@ -332,9 +331,6 @@
                           </div>
                       </div>
                     </div>
-
-
-
 
                     {{-- Modal Update --}}
                     <div class="modal fade" id="modal-update{{ $data->id }}" tabindex="-1" aria-labelledby="modal-update{{ $data->id }}-label" aria-hidden="true">
@@ -349,6 +345,9 @@
                               @method('patch')
                               <div class="modal-body">
                                 <input type="text" value="{{$data->id}}" hidden>
+                                <div class="form-group mb-3">
+                                  <input value="{{$data->no_delivery}}" type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                </div>
                                 <div class="form-group mb-3">
                                   <input value="{{$data->no_pallet}}" type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Delivery" required>
                                 </div>

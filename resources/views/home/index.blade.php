@@ -27,10 +27,17 @@
                     <div class="chart-pie"><canvas id="enginePieChart" width="100%" height="50"></canvas></div>
                 </div>
                 <div class="card-footer small text-muted">
-                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
                     
                     @foreach(json_decode($enginePieData, true) as $destination => $count)
-                        <p class="text-bold">{{ $destination }} : {{ $count }}</p>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p style="color: black">{{ $destination }}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <p style="color: black">: {{ $count }}</p>
+                        </div>
+                    </div>
                     @endforeach
 
                 </div>
@@ -46,10 +53,17 @@
                     <div class="chart-pie"><canvas id="transmissionPieChart" width="100%" height="50"></canvas></div>
                 </div>
                 <div class="card-footer small text-muted">
-                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
 
                     @foreach(json_decode($transmissionPieData, true) as $destination => $count)
-                        <p>{{ $destination }}: {{ $count }}</p>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p style="color: black">{{ $destination }}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <p style="color: black">: {{ $count }}</p>
+                        </div>
+                    </div>
                     @endforeach
                 </div>
             </div>
@@ -63,10 +77,18 @@
                     <div class="chart-pie"><canvas id="faPieChart" width="100%" height="50"></canvas></div>
                 </div>
                 <div class="card-footer small text-muted">
-                    <p>Updated today at {{ now()->format('h:i A') }}</p>
+                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
 
                     @foreach(json_decode($faPieData, true) as $destination => $count)
-                        <p>{{ $destination }}: {{ $count }}</p>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p style="color: black">{{ $destination }}</p>
+                            </div>
+                            <div class="col-md-9">
+                                <p style="color: black">: {{ $count }}</p>
+                            </div>
+                        </div>
+                       
                     @endforeach
                 </div>
             </div>

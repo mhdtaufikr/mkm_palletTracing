@@ -35,6 +35,17 @@ class PalletImport implements ToCollection, WithHeadingRow
                     $date = $acquisitionDate;
                 }
             }
+
+                // Check if the type_pallet value is valid
+                $validTypePallets = ['Engine', 'FA', 'TM-Assy'];
+                if (!in_array($row['type_pallet'], $validTypePallets)) {
+                    // Type pallet validation failed, rollback the transaction
+                    DB::rollBack();
+                    $errorMessage = 'Error importing Pallet. Invalid type_pallet for no_pallet ' . $row['no_pallet'];
+                    session()->flash('failed', $errorMessage);
+                    throw new \Exception($errorMessage); // Stop the import process
+                }
+
                 $checkExistingPallets = Pallet::where('no_pallet', $row['no_pallet'])->get();
 
                 if ($checkExistingPallets->isEmpty()) {
@@ -96,7 +107,6 @@ class PalletImport implements ToCollection, WithHeadingRow
                          $existingPallet->update(['status' => 0]);
                      }
  
- 
                  // Create a new Pallet with status 1
                  Pallet::create([
                      'no_delivery' => $row['no_delivery'],
@@ -111,8 +121,6 @@ class PalletImport implements ToCollection, WithHeadingRow
              DB::commit();
                 }
 
-
-                   
         } catch (\Exception $e) {
             // An error occurred, rollback the transaction
             DB::rollBack();

@@ -42,6 +42,8 @@ class ExcelExport implements FromCollection, WithHeadings
         
         // Add note below "Date" heading
         $sheet->setCellValue('E2', $this->note);
+        $sheet->setCellValue('D2', 'MKM/TJU/KRM');
+        $sheet->setCellValue('C2', 'Engine/TM-Assy/FA');
 
         return new Xlsx($spreadsheet);
     }
