@@ -41,7 +41,7 @@ class PalletImport implements ToCollection, WithHeadingRow
                 // Additional validation for the first two characters of no_pallet
                 $validPrefixes = ['EG', 'FA', 'TM'];
                 $palletPrefix = substr($row['no_pallet'], 0, 2);
-
+              
                 if (!in_array($palletPrefix, $validPrefixes)) {
                     // Prefix validation failed, rollback the transaction
                     DB::rollBack();
@@ -50,11 +50,11 @@ class PalletImport implements ToCollection, WithHeadingRow
                     throw new \Exception($errorMessage); // Stop the import process
                 }
             }
-
             // If all rows are valid, proceed with the import
             foreach ($rows as $row) {
                 // Import logic for each row
                 $checkExistingPallets = Pallet::where('no_pallet', $row['no_pallet'])->get();
+                $palletPrefix = substr($row['no_pallet'], 0, 2);
                 $typePalletMap = [
                     'EG' => 'Engine',
                     'FA' => 'FA',
