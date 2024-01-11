@@ -29,6 +29,13 @@ class DropdownsTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'category' => 'Role',
+                'name_value' => 'IT',
+                'code_format' => 'IT',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'category' => 'Destination',
                 'name_value' => 'MKM',
                 'code_format' => 'MKM',

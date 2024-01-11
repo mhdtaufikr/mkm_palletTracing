@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Dropdown;
 use Illuminate\Http\Request;
 use App\Models\Pallet;
-use Illuminate\Validation\Rule;
-use Carbon\Carbon;
 use App\Exports\ExcelExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PalletImport;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use App\Exports\PalletExport;
 class PalletController extends Controller
 {
 
@@ -29,7 +26,6 @@ class PalletController extends Controller
         return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
     }
 
-
     public function store(Request $request)
     {
         // Validate the request data
@@ -38,14 +34,11 @@ class PalletController extends Controller
             'date' => 'required|date',
             'no_pallet' => 'required|array',
             'no_pallet.*' => 'string|max:255',
-            'type_pallet' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
         ]);
-    
+
         // Wrap the operation in a database transaction
         DB::beginTransaction();
-    
-      // ...
 
         try {
             // Check if a record with the same no_delivery exists
@@ -63,7 +56,7 @@ class PalletController extends Controller
             // Iterate through each "No. Pallet" value and create/update Pallet instances
             foreach ($request->input('no_pallet') as $noPallet) {
                 // Check if a record with the same no_pallet exists
-                $existingPallet = Pallet::where('no_pallet', $noPallet)->where('status','1')->first();
+                $existingPallet = Pallet::where('no_pallet', $noPallet)->where('status', '1')->first();
 
                 if ($existingPallet) {
                     // Update the existing record's status to 0
@@ -96,12 +89,15 @@ class PalletController extends Controller
                     return redirect()->route('pallet.index')->with('failed', 'Invalid destination')->withInput();
                 }
 
+                // Derive type_pallet from the first two characters of no_pallet
+                $typePallet = $this->getTypePalletFromNoPallet($noPallet);
+
                 // Create a new Pallet with status 1
                 $palletsData[] = [
                     'no_delivery' => $request->input('no_delivery'),
                     'date' => $request->input('date'),
                     'no_pallet' => $noPallet,
-                    'type_pallet' => $request->input('type_pallet'),
+                    'type_pallet' => $typePallet,
                     'destination' => $request->input('destination'),
                     'status' => 1,
                     'created_at' => now(),
@@ -122,10 +118,26 @@ class PalletController extends Controller
             DB::rollBack();
             return redirect()->route('pallet.index')->with('failed', 'An error occurred while saving the data')->withInput();
         }
-
     }
-    
 
+    /**
+     * Derive type_pallet from the first two characters of no_pallet
+     *
+     * @param string $noPallet
+     * @return string|null
+     */
+    private function getTypePalletFromNoPallet($noPallet)
+    {
+        $prefixMappings = [
+            'EG' => 'Engine',
+            'FA' => 'FA',
+            'TM' => 'TM-Assy',
+        ];
+
+        $palletPrefix = substr($noPallet, 0, 2);
+
+        return $prefixMappings[$palletPrefix] ?? null;
+    }
 
     public function update(Request $request, $id)
     {
@@ -133,7 +145,6 @@ class PalletController extends Controller
         $request->validate([
             'no_delivery' => 'required|string|max:255',
             'date' => 'required|date_format:Y-m-d',
-            'type_pallet' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
             'no_pallet' => 'required|string|max:255',
         ]);
@@ -144,10 +155,13 @@ class PalletController extends Controller
         // Get the original attributes
         $originalAttributes = $pallet->getOriginal();
     
+        // Derive type_pallet from the first two characters of no_pallet
+        $typePallet = $this->getTypePalletFromNoPallet($request->input('no_pallet'));
+    
         // Update the Pallet with the new data
         $pallet->no_delivery = $request->input('no_delivery');
         $pallet->date = $request->input('date');
-        $pallet->type_pallet = $request->input('type_pallet');
+        $pallet->type_pallet = $typePallet; // Assign derived type_pallet
         $pallet->destination = $request->input('destination');
         $pallet->no_pallet = $request->input('no_pallet');
     
@@ -163,6 +177,7 @@ class PalletController extends Controller
             return redirect()->route('pallet.index')->with('failed', 'No changes made to the Pallet');
         }
     }
+    
     
     
         

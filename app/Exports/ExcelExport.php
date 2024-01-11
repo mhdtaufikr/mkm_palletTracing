@@ -28,7 +28,7 @@ class ExcelExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'No. Delivery', 'No Pallet', 'Type Pallet', 'Destination', 'Date'
+            'No. Delivery', 'No Pallet',  'Destination', 'Date'
         ];
     }
 
@@ -41,9 +41,8 @@ class ExcelExport implements FromCollection, WithHeadings
         $sheet->fromArray([$this->headings()], null, 'A1');
         
         // Add note below "Date" heading
-        $sheet->setCellValue('E2', $this->note);
-        $sheet->setCellValue('D2', 'MKM/TJU/KRM');
-        $sheet->setCellValue('C2', 'Engine/TM-Assy/FA');
+        $sheet->setCellValue('D2', $this->note);
+        $sheet->setCellValue('C2', 'MKM/TJU/KRM');
 
         return new Xlsx($spreadsheet);
     }

@@ -130,13 +130,15 @@
                 <div class="table-responsive">
                   <div class="mb-3 col-sm-6">
                     <!-- Search Form -->
-          
+                    @if(in_array(\Auth::user()->role, ['Super Admin', 'IT']))
                     <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
-                        <i class="fas fa-plus-square"></i>
-                    </button>
-                    <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
-                        Import Assets
-                    </button>
+                      <i class="fas fa-plus-square"></i>
+                  </button>
+                  <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
+                      Import Assets
+                  </button>
+                    @endif
+                  
 
                       <script>
                         // JavaScript to toggle between input types based on the selected option
@@ -172,14 +174,6 @@
                                                     <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
                                                     <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
                                                 </div>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <select name="type_pallet" id="type_pallet" class="form-control">
-                                                    <option value="">- Please Select Type Pallet -</option>
-                                                    @foreach ($typePallet as $type)
-                                                    <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
-                                                    @endforeach
-                                                </select>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
@@ -279,7 +273,9 @@
                     <th>Destination</th>
                     <th>Date</th>
                     <th>Status</th>
+                    @if(in_array(\Auth::user()->role, ['Super Admin', 'IT']))
                     <th>Action</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
@@ -307,17 +303,19 @@
                               </button>
                           @endif
                         </td>
-                        <td>
-                            <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
-                                <i class="fas fa-edit"></i>
-                              </button>
-                            <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
-                              <i class="fas fa-info"></i>
-                          </button>
-                            <button title="Delete Pallet" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
-                                <i class="fas fa-trash-alt"></i>
-                              </button>   
-                        </td>
+                        @if(in_array(\Auth::user()->role, ['Super Admin', 'IT']))
+                            <td>
+                              <button title="Edit Pallet" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                                  <i class="fas fa-edit"></i>
+                                </button>
+                              <button title="Info Pallet" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail{{ $data->id }}">
+                                <i class="fas fa-info"></i>
+                            </button>
+                              <button title="Delete Pallet" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                                  <i class="fas fa-trash-alt"></i>
+                                </button>   
+                            </td>
+                        @endif
                     </tr>
 
                     <!-- Modal -->
@@ -364,14 +362,6 @@
                                 </div>
                                 <div class="form-group mb-3">
                                   <input value="{{$data->no_pallet}}" type="text" class="form-control" id="no_pallet" name="no_pallet" placeholder="Enter No. Delivery" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <select name="type_pallet" id="type_pallet" class="form-control">
-                                        <option value="{{$data->type_pallet}}">{{$data->type_pallet}}</option>
-                                        @foreach ($typePallet as $type)
-                                            <option value="{{ $type->name_value }}">{{ $type->name_value }}</option>
-                                        @endforeach
-                                      </select>
                                 </div>
                                   <div class="form-group mb-3">
                                     <input value="{{$data->date}}" type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>

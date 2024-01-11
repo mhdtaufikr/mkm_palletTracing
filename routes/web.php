@@ -31,30 +31,30 @@ Route::middleware(['auth'])->group(function () {
 
     //Pallet Controller
     Route::get('/pallet', [PalletController::class, 'index'])->name('pallet.index');
-    Route::post('/pallet/store', [PalletController::class, 'store'])->middleware(['checkRole:Super Admin']);
-    Route::patch('/pallet/update/{id}', [PalletController::class, 'update'])->middleware(['checkRole:Super Admin']);
-    Route::delete('/pallet/delete/{id}', [PalletController::class, 'delete'])->middleware(['checkRole:Super Admin']);
-    Route::get('/pallet/download/format', [PalletController::class, 'excelFormat'])->middleware(['checkRole:Super Admin']);
-    Route::post('/pallet/import', [PalletController::class, 'excelData'])->middleware(['checkRole:Super Admin']);
-    Route::post('/pallet/search', [PalletController::class, 'palletSearch'])->middleware(['checkRole:Super Admin']);
+    Route::post('/pallet/store', [PalletController::class, 'store'])->middleware(['checkRole:Super Admin,IT']);
+    Route::patch('/pallet/update/{id}', [PalletController::class, 'update'])->middleware(['checkRole:Super Admin,IT']);
+    Route::delete('/pallet/delete/{id}', [PalletController::class, 'delete'])->middleware(['checkRole:Super Admin,IT']);
+    Route::get('/pallet/download/format', [PalletController::class, 'excelFormat'])->middleware(['checkRole:Super Admin,IT']);
+    Route::post('/pallet/import', [PalletController::class, 'excelData'])->middleware(['checkRole:Super Admin,IT']);
+    Route::post('/pallet/search', [PalletController::class, 'palletSearch'])->middleware(['checkRole:Super Admin,IT']);
 
      //Dropdown Controller
-     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:Super Admin']);
-     Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:Super Admin']);
-     Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update'])->middleware(['checkRole:Super Admin']);
-     Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete'])->middleware(['checkRole:Super Admin']);
+     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
+     Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:IT']);
+     Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update'])->middleware(['checkRole:IT']);
+     Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete'])->middleware(['checkRole:IT']);
  
      //Rules Controller
-     Route::get('/rule', [RulesController::class, 'index'])->middleware(['checkRole:Super Admin']);
-     Route::post('/rule/store', [RulesController::class, 'store'])->middleware(['checkRole:Super Admin']);
-     Route::patch('/rule/update/{id}', [RulesController::class, 'update'])->middleware(['checkRole:Super Admin']);
-     Route::delete('/rule/delete/{id}', [RulesController::class, 'delete'])->middleware(['checkRole:Super Admin']);
+     Route::get('/rule', [RulesController::class, 'index'])->middleware(['checkRole:IT']);
+     Route::post('/rule/store', [RulesController::class, 'store'])->middleware(['checkRole:IT']);
+     Route::patch('/rule/update/{id}', [RulesController::class, 'update'])->middleware(['checkRole:IT']);
+     Route::delete('/rule/delete/{id}', [RulesController::class, 'delete'])->middleware(['checkRole:IT']);
 
     //User Controller
-    Route::get('/user', [UserController::class, 'index'])->middleware(['checkRole:Super Admin']);
-    Route::post('/user/store', [UserController::class, 'store'])->middleware(['checkRole:Super Admin']);
-    Route::post('/user/store-partner', [UserController::class, 'storePartner'])->middleware(['checkRole:Super Admin']);
-    Route::patch('/user/update/{user}', [UserController::class, 'update'])->middleware(['checkRole:Super Admin']);
-    Route::get('/user/revoke/{user}', [UserController::class, 'revoke'])->middleware(['checkRole:Super Admin']);
-    Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:Super Admin']);
+    Route::get('/user', [UserController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::post('/user/store', [UserController::class, 'store'])->middleware(['checkRole:IT']);
+    Route::post('/user/store-partner', [UserController::class, 'storePartner'])->middleware(['checkRole:IT']);
+    Route::patch('/user/update/{user}', [UserController::class, 'update'])->middleware(['checkRole:IT']);
+    Route::get('/user/revoke/{user}', [UserController::class, 'revoke'])->middleware(['checkRole:IT']);
+    Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:IT']);
 });

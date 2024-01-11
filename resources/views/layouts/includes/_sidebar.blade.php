@@ -13,7 +13,7 @@
                     <div class="nav-link-icon"><i class="fas fa-pallet"></i></div>
                     Pallet Tracing
                 </a>
-                @if(\Auth::user()->role === 'Super Admin')
+                @if(\Auth::user()->role === 'IT')
                 <!-- Sidenav Menu Heading (Core)-->
                 <div class="sidenav-menu-heading">Configuration</div>
                 <!-- Sidenav Accordion (Utilities)-->
