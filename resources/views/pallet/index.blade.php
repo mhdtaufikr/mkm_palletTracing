@@ -161,8 +161,8 @@
                     <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
                       <i class="fas fa-plus-square"></i>
                   </button>
-                  <button title="Import Asset" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
-                      Import Assets
+                  <button title="Import Pallet" type="button" class="btn btn-info btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-import">
+                      Import Pallet
                   </button>
                     @endif
                       <!-- Modal -->
@@ -338,7 +338,7 @@
                           <div class="modal-dialog">
                               <div class="modal-content">
                                   <div class="modal-header">
-                                      <h5 class="modal-title" id="modal-add-label">Import Asset</h5>
+                                      <h5 class="modal-title" id="modal-add-label">Import Pallet</h5>
                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <form action="{{ url('/pallet/import') }}" method="POST" enctype="multipart/form-data">

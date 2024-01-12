@@ -42,7 +42,7 @@ class ExcelExport implements FromCollection, WithHeadings
         
         // Add note below "Date" heading
         $sheet->setCellValue('D2', $this->note);
-        $sheet->setCellValue('C2', 'MKM/TJU/KRM');
+        $sheet->setCellValue('C2', 'MKM/TJU/KRM/KTBSP');
 
         return new Xlsx($spreadsheet);
     }
