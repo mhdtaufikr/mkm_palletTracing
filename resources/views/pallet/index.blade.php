@@ -455,7 +455,17 @@
                                       <p>Type Pallet: {{ $pallet->type_pallet }}</p>
                                       <p>Destination: {{ $pallet->destination }}</p>
                                       <p>Date: {{ \Carbon\Carbon::parse($pallet->date)->format('d-m-Y') }}</p>
-                                      <p>Status: {{ $pallet->status }}</p>
+                                      <p>Status: @if($data->status == 1)
+                                        <!-- Button for active status -->
+                                        <button class="btn btn-success btn-sm">
+                                            Active
+                                        </button>
+                                    @else
+                                        <!-- Button for disposal status -->
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fa-solid fa-x"></i> Done
+                                        </button>
+                                    @endif</p>
                                   @endforeach
                               </div>
                               <div class="modal-footer">
