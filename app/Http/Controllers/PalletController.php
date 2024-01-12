@@ -14,17 +14,22 @@ class PalletController extends Controller
 {
 
     public function index()
-    {
-       
-        // Fetch pallet data grouped by no_pallet
-        $palletData = Pallet::orderBy('created_at', 'desc')->where('status','1')->get();
-        // Fetch dropdown data
-        $typePallet = Dropdown::where('category', 'Type Pallet')->get();
-        $destinationPallet = Dropdown::where('category', 'Destination')->get();
+        {
+            // Fetch pallet data grouped by no_pallet
+            $palletData = Pallet::orderBy('created_at', 'desc')->where('status', '1')->get();
 
-        // Pass the data to the view
-        return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
-    }
+            // Fetch dropdown data
+            $typePallet = Dropdown::where('category', 'Type Pallet')->get();
+            $destinationPallet = Dropdown::where('category', 'Destination')->get();
+
+            // Fetch all pallets for the initial load and encode it properly
+            $allPallets = json_encode(Pallet::pluck('no_pallet', 'destination')->toArray());
+
+            // Pass the data to the view
+            return view("pallet.index", compact("palletData", "typePallet", "destinationPallet", "allPallets"));
+        }
+
+
 
     public function store(Request $request)
     {
@@ -63,7 +68,7 @@ class PalletController extends Controller
                     $existingPallet->update(['status' => 0]);
 
                     // Check for destination validation against the old destination
-                    $validDestination = in_array($request->input('destination'), ['TJU', 'KRM', 'MKM']);
+                    $validDestination = in_array($request->input('destination'), ['TJU', 'KRM', 'MKM','KTBSP']);
 
                     if (!$validDestination || $request->input('destination') === $existingPallet->destination) {
                         // Destination validation failed, rollback the transaction
@@ -77,10 +82,12 @@ class PalletController extends Controller
 
                 // Define the conditions for invalid destination movement
                 $invalidConditions = [
-                    'KRM' => ['TJU'],
-                    'TJU' => ['KRM'],
+                    'KRM' => ['TJU', 'KTBSP'],
+                    'TJU' => ['KRM', 'KTBSP'],
+                    'KTBSP' => ['KRM', 'TJU'],
                     'MKM' => [], // MKM can be moved to any destination
                 ];
+                
 
                 // Check if the new destination is in the list of invalid destinations for the old destination
                 if ($oldDestination && in_array($request->input('destination'), $invalidConditions[$oldDestination])) {
@@ -247,13 +254,13 @@ class PalletController extends Controller
 
     public function palletSearch(Request $request)
     {
-        // Validate the request data
         $request->validate([
-            'searchBy' => 'required|in:no_pallet,date',
+            'searchBy' => 'required|in:no_pallet,date,storage', // Include 'storage' in the validation rule
             'palletNo' => 'nullable|string',
             'dateFrom' => 'nullable|date',
             'dateTo' => 'nullable|date|after_or_equal:dateFrom',
         ]);
+        
         $typePallet = Dropdown::where('category', 'Type Pallet')->get();
         $destinationPallet = Dropdown::where('category', 'Destination')->get();
 
@@ -268,20 +275,85 @@ class PalletController extends Controller
         if ($searchBy === 'no_pallet') {
             // Search by no_pallet if palletNo is provided
             if ($palletNo) {
-                $query->where('no_pallet', $palletNo)->where('status','1');
+                $query->where('no_pallet', $palletNo)->where('status', '1');
             }
-        } elseif ($searchBy === 'date' && $dateFrom && $dateTo) {
-            $query->whereBetween('date', [$dateFrom, $dateTo]);
-        }
+            } elseif ($searchBy === 'date' && $dateFrom && $dateTo) {
+                $query->whereBetween('date', [$dateFrom, $dateTo]);
+            } elseif ($searchBy === 'storage' && $request->has('storage')) { // New condition for Storage
+                $query->where('destination', $request->storage);
+            }
+        
 
         // Add any additional conditions as needed
 
         // Execute the query
-        $palletData = $query->get();
+        $palletData = $query->orderBy('date', 'desc')->get();
 
         // Do something with the results
         return view("pallet.index", compact("palletData", "typePallet", "destinationPallet"));
     }
+    public function getNoPallets($destination)
+    {
+          // Fetch all no_pallet values based on destination and status
+          $allNoPallets = Pallet::where('status', 1);
     
+          // Apply additional conditions based on the destination
+          if ($destination == 'TJU') {
+              $allNoPallets->where(function ($query) use ($destination) {
+                  $query->where('destination', '!=', $destination)
+                      ->Where('destination','MKM');
+              });
+          } elseif ($destination == 'KRM') {
+              $allNoPallets->where(function ($query) use ($destination) {
+                  $query->where('destination', '!=', $destination)
+                      ->Where('destination','MKM');
+              });
+          } elseif ($destination == 'KTBSP') {
+              $allNoPallets->where(function ($query) use ($destination) {
+                  $query->where('destination', '!=', $destination)
+                      ->Where('destination','MKM');
+              });
+          } elseif ($destination == 'MKM') {
+              $allNoPallets->where('destination', '!=', $destination);
+          }
+      
+          // Order the results by no_pallet
+          $noPallets = $allNoPallets->orderBy('no_pallet')->pluck('no_pallet');
+      
+          return response()->json($noPallets);
+    }
+
+    public function getAllNoPallets($destination)
+    {
+        // Fetch all no_pallet values based on destination and status
+        $allNoPallets = Pallet::where('status', 1);
+    
+        // Apply additional conditions based on the destination
+        if ($destination == 'TJU') {
+            $allNoPallets->where(function ($query) use ($destination) {
+                $query->where('destination', '!=', $destination)
+                    ->Where('destination','MKM');
+            });
+        } elseif ($destination == 'KRM') {
+            $allNoPallets->where(function ($query) use ($destination) {
+                $query->where('destination', '!=', $destination)
+                    ->Where('destination','MKM');
+            });
+        } elseif ($destination == 'KTBSP') {
+            $allNoPallets->where(function ($query) use ($destination) {
+                $query->where('destination', '!=', $destination)
+                    ->Where('destination','MKM');
+            });
+        } elseif ($destination == 'MKM') {
+            $allNoPallets->where('destination', '!=', $destination);
+        }
+    
+        // Order the results by no_pallet
+        $allNoPallets = $allNoPallets->orderBy('no_pallet')->pluck('no_pallet');
+    
+        return response()->json($allNoPallets);
+    }
+    
+
     
 }

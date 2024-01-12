@@ -25,6 +25,15 @@ Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/auth/login', [AuthController::class, 'postLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
+
+// Add this route for the Ajax request
+Route::get('/getNoPallets/{destination}',  [PalletController::class, 'getNoPallets']);
+// Update the route for the Ajax request to fetch all no_pallet values
+Route::get('/getAllNoPallets/{destination}',  [PalletController::class, 'getAllNoPallets']);
+
+
+
+
 Route::middleware(['auth'])->group(function () {
     //Home Controller
     Route::get('/home', [HomeController::class, 'index']);

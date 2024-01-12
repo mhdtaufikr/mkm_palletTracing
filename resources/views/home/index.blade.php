@@ -109,6 +109,14 @@
     // Data for 'FA' Pie Chart
     var faPieData = {!! $faPieData !!};
 
+    // Mapping of destinations to colors
+    var destinationColors = {
+        'MKM': '#FF5733',
+        'KTBSP': '#FFC300',
+        'KRM': '#33FF57',
+        'TJU': '#3385FF',
+    };
+
     // Initialize 'Engine' Pie Chart
     var enginePieChart = new Chart(document.getElementById('enginePieChart').getContext('2d'), {
         type: 'pie',
@@ -116,7 +124,7 @@
             labels: Object.keys(enginePieData),
             datasets: [{
                 data: Object.values(enginePieData),
-                backgroundColor: ['#FF5733', '#FFC300', '#33FF57'], // Set your preferred colors
+                backgroundColor: Object.keys(enginePieData).map(destination => destinationColors[destination]),
             }],
         },
     });
@@ -128,7 +136,7 @@
             labels: Object.keys(transmissionPieData),
             datasets: [{
                 data: Object.values(transmissionPieData),
-                backgroundColor: ['#FF5733', '#FFC300', '#33FF57'], // Set your preferred colors
+                backgroundColor: Object.keys(transmissionPieData).map(destination => destinationColors[destination]),
             }],
         },
     });
@@ -140,11 +148,12 @@
             labels: Object.keys(faPieData),
             datasets: [{
                 data: Object.values(faPieData),
-                backgroundColor: ['#FF5733', '#FFC300', '#33FF57'], // Set your preferred colors
+                backgroundColor: Object.keys(faPieData).map(destination => destinationColors[destination]),
             }],
         },
     });
 </script>
+
 
 <script>
     var myDate = new Date();

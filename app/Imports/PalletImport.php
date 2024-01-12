@@ -86,10 +86,12 @@ class PalletImport implements ToCollection, WithHeadingRow
 
                     // Define the conditions for invalid destination movement
                     $invalidConditions = [
-                        'KRM' => ['TJU'],
-                        'TJU' => ['KRM'],
+                        'KRM' => ['TJU', 'KTBSP'],
+                        'TJU' => ['KRM', 'KTBSP'],
+                        'KTBSP' => ['KRM', 'TJU'],
                         'MKM' => [], // MKM can be moved to any destination
                     ];
+                    
 
                     // Check if the new destination is in the list of invalid destinations for the old destination
                     if (in_array($row['destination'], $invalidConditions[$oldDestination])) {

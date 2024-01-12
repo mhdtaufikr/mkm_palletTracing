@@ -39,61 +39,88 @@
                 <div class="mb-3 col-sm-6">
                   <form action="{{ url('/pallet/search') }}" method="POST" id="searchForm">
                     @csrf <!-- Include CSRF token for security -->
-                  <!-- Search Form -->
-                  <div class="input-group input-group-sm">
-                      <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs()">
-                        <option value="date">Date</option>
-                          <option value="no_pallet">No Pallet</option>
-                          
-                      </select>
-                      <input name="palletNo" type="text" class="form-control" id="searchNoPallet" placeholder="Enter search term" style="display: none;">
-                      <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date"> <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date">
-                      <button class="btn btn-dark btn-sm" type="submit" onclick="search()">Search</button>
-                  </div>
+                
+                    <!-- Search Form -->
+                    <div class="input-group input-group-sm">
+                        <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs()">
+                          <option value="">Search By</option>  
+                          <option value="date">Date</option>
+                            <option value="no_pallet">No Pallet</option>
+                            <option value="storage">Storage</option>
+                        </select>
+                
+                        <!-- No Pallet Input -->
+                        <input name="palletNo" type="text" class="form-control" id="searchNoPallet" placeholder="Enter search term" style="display: none;">
+                
+                        <!-- Date Inputs -->
+                        <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date" style="display: none;">
+                        <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date" style="display: none;">
+                
+                        <!-- Storage Input -->
+                        <select class="form-control" name="storage" id="searchStorage" style="display: none;">
+                            @foreach ($destinationPallet as $storage)
+                                <option value="{{ $storage->name_value }}">{{ $storage->name_value }}</option>
+                            @endforeach
+                        </select>
+                
+                        <button class="btn btn-dark btn-sm" type="submit" onclick="search()">Search</button>
+                    </div>
                 </form>
+                
+                   <script>
+                    function toggleSearchInputs() {
+                        var searchBy = document.getElementById('searchBy').value;
+                        var searchNoPallet = document.getElementById('searchNoPallet');
+                        var startDate = document.getElementById('startDate');
+                        var endDate = document.getElementById('endDate');
+                        var searchStorage = document.getElementById('searchStorage');
+
+                        if (searchBy === 'no_pallet') {
+                            searchNoPallet.style.display = 'block';
+                            startDate.style.display = 'none';
+                            endDate.style.display = 'none';
+                            searchStorage.style.display = 'none';
+                        } else if (searchBy === 'date') {
+                            searchNoPallet.style.display = 'none';
+                            startDate.style.display = 'inline-block';
+                            endDate.style.display = 'inline-block';
+                            searchStorage.style.display = 'none';
+                        } else if (searchBy === 'storage') {
+                            searchNoPallet.style.display = 'none';
+                            startDate.style.display = 'none';
+                            endDate.style.display = 'none';
+                            searchStorage.style.display = 'block';
+                        } else {
+                            searchNoPallet.style.display = 'none';
+                            startDate.style.display = 'none';
+                            endDate.style.display = 'none';
+                            searchStorage.style.display = 'none';
+                        }
+                    }
+
+                    function search() {
+                        var searchBy = document.getElementById('searchBy').value;
+                        var searchTerm;
+
+                        if (searchBy === 'no_pallet') {
+                            searchTerm = document.getElementById('searchNoPallet').value;
+                        } else if (searchBy === 'date') {
+                            var startDate = document.getElementById('startDate').value;
+                            var endDate = document.getElementById('endDate').value;
+                            // Implement logic to use startDate and endDate for date search
+                        } else if (searchBy === 'storage') {
+                            searchTerm = document.getElementById('searchStorage').value;
+                        }
+
+                        // Perform search operation using searchTerm
+                        console.log('Search By:', searchBy, 'Search Term:', searchTerm);
+                    }
+                </script>
+
+                
               </div>
             </div>
               <div class="row">
-              
-              <script>
-                function toggleSearchInputs() {
-                    var searchBy = document.getElementById('searchBy').value;
-                    var searchNoPallet = document.getElementById('searchNoPallet');
-                    var startDate = document.getElementById('startDate');
-                    var endDate = document.getElementById('endDate');
-            
-                    if (searchBy === 'no_pallet') {
-                        searchNoPallet.style.display = 'block';
-                        startDate.style.display = 'none';
-                        endDate.style.display = 'none';
-                    } else if (searchBy === 'date') {
-                        searchNoPallet.style.display = 'none';
-                        startDate.style.display = 'inline-block';
-                        endDate.style.display = 'inline-block';
-                    } else {
-                        searchNoPallet.style.display = 'none';
-                        startDate.style.display = 'none';
-                        endDate.style.display = 'none';
-                    }
-                }
-            
-                function search() {
-                    // Implement your search logic here based on selected option and input values
-                    var searchBy = document.getElementById('searchBy').value;
-                    var searchTerm;
-            
-                    if (searchBy === 'no_pallet') {
-                        searchTerm = document.getElementById('searchNoPallet').value;
-                    } else if (searchBy === 'date') {
-                        var startDate = document.getElementById('startDate').value;
-                        var endDate = document.getElementById('endDate').value;
-                        // Implement logic to use startDate and endDate for date search
-                    }
-            
-                    // Perform search operation using searchTerm
-                    console.log('Search By:', searchBy, 'Search Term:', searchTerm);
-                }
-            </script>
                     <div class="col-sm-12">
                       <!--alert success -->
                       @if (session('status'))
@@ -138,81 +165,175 @@
                       Import Assets
                   </button>
                     @endif
-                  
+                      <!-- Modal -->
+                      <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="addPalletForm" action="{{ url('/pallet/store') }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="form-group mb-3">
+                                            <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <select name="destination" id="destination" class="form-control">
+                                                <option value="">- Please Select Destination -</option>
+                                                @foreach ($destinationPallet as $des)
+                                                    <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                          <!-- Dynamic pallet dropdown will be added here -->
+                                          <div class="input-group mb-3" id="noPalletContainer">
+                                              <select name="no_pallet[]" class="form-control" required id="palletDropdown">
+                                                  <option value="">- Please Select Pallet -</option>
+                                                  <!-- Dynamic options will be added here -->
+                                              </select>
+                                              <button type="button" class="btn btn-success" onclick="addNoPalletField()" id="addButton" disabled>+</button>
+                                          </div>
+                                      </div>
+
+                                        <div class="form-group mb-3">
+                                            <input type="date" class="form-control" id="date" name="date" placeholder="Enter Date" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                      </div>
 
                       <script>
-                        // JavaScript to toggle between input types based on the selected option
-                        document.getElementById('searchType').addEventListener('change', function () {
-                            var selectedType = this.value;
+                        // Reference to the main dropdown
+                        var mainPalletDropdown = document.querySelector('#noPalletContainer select');
+                        var palletDropdown = document.getElementById('palletDropdown');
+                        var addButton = document.getElementById('addButton');
 
-                            if (selectedType === 'date') {
-                                document.getElementById('searchInputContainer').style.display = 'none';
-                                document.getElementById('dateInputContainer').style.display = 'block';
+                        // Add event listener to the dropdown
+                          palletDropdown.addEventListener('change', function () {
+                              // Enable/disable the button based on whether a value is selected
+                              addButton.disabled = palletDropdown.value === '';
+                          });
+                        document.getElementById('destination').addEventListener('change', function () {
+                            var destination = this.value;
+                            if (destination) {
+                                // Make an Ajax request to fetch no_pallet values for the selected destination
+                                fetch('/getNoPallets/' + destination)
+                                    .then(response => response.json())
+                                    .then(data => updatePalletDropdown(data));
+
+                                // Fetch all no_pallet values (for main pallet dropdown)
+                                fetch('/getAllNoPallets/' + destination)
+                                    .then(response => response.json())
+                                    .then(data => updateMainPalletDropdown(data));
                             } else {
-                                document.getElementById('searchInputContainer').style.display = 'block';
-                                document.getElementById('dateInputContainer').style.display = 'none';
+                                // Clear the pallet dropdown if no destination is selected
+                                updatePalletDropdown([]);
                             }
                         });
+
+                        function addNoPalletField() {
+                            var container = document.getElementById('noPalletContainer');
+
+                            // Save the values of existing dropdowns
+                            var existingDropdowns = container.querySelectorAll('select');
+                            var existingValues = Array.from(existingDropdowns).map(function (dropdown) {
+                                return dropdown.value;
+                            });
+                            
+                            var inputGroup = document.createElement('div');
+                            inputGroup.className = 'input-group mt-3';
+
+                            var select = document.createElement('select');
+                            select.name = 'no_pallet[]';
+                            select.className = 'form-control';
+                            select.required = true;
+                            select.innerHTML = '<option value="">- Please Select Pallet -</option>';
+                            inputGroup.appendChild(select);
+
+                            var button = document.createElement('button');
+                            button.className = 'btn btn-danger';
+                            button.type = 'button';
+                            button.textContent = '-';
+                            button.onclick = function () {
+                                removeNoPalletField(button);
+                            };
+                            inputGroup.appendChild(button);
+
+                            container.appendChild(inputGroup);
+
+                            // Fetch no_pallet values for the selected destination
+                            var destination = document.getElementById('destination').value;
+                            if (destination) {
+                                // Fetch no_pallet values for the selected destination
+                                fetch('/getNoPallets/' + destination)
+                                    .then(response => response.json())
+                                    .then(data => updatePalletDropdown(data, select));
+                            } else {
+                                // Clear the new dropdown if no destination is selected
+                                updatePalletDropdown([], select);
+                            }
+
+                            // Update the new dropdown with existing values
+                            existingValues.forEach(function (value) {
+                                var option = document.createElement('option');
+                                option.value = value;
+                                option.text = value;
+                                select.appendChild(option);
+                            });
+                            addButton.disabled = false;
+                        }
+
+                        function updateMainPalletDropdown(mainPallets) {
+                            // Clear previous options
+                            mainPalletDropdown.innerHTML = '<option value="">- Please Select Pallet -</option>';
+
+                            // Check if mainPallets is an array before iterating
+                            if (Array.isArray(mainPallets)) {
+                                // Add new options based on the fetched main_pallet values
+                                mainPallets.forEach(function (mainPallet) {
+                                    var option = document.createElement('option');
+                                    option.value = mainPallet;
+                                    option.text = mainPallet;
+                                    mainPalletDropdown.appendChild(option);
+                                });
+                            } else {
+                                console.error('Invalid data received for mainPallets:', mainPallets);
+                            }
+                        }
+
+                        function updatePalletDropdown(noPallets, palletDropdown) {
+                            // Clear previous options
+                            palletDropdown.innerHTML = '<option value="">- Please Select Pallet -</option>';
+
+                            // Check if noPallets is an array before iterating
+                            if (Array.isArray(noPallets)) {
+                                // Add new options based on the fetched no_pallet values
+                                noPallets.forEach(function (pallet) {
+                                    var option = document.createElement('option');
+                                    option.value = pallet;
+                                    option.text = pallet;
+                                    palletDropdown.appendChild(option);
+                                });
+                            } else {
+                                console.error('Invalid data received for noPallets:', noPallets);
+                            }
+                        }
+
+                        function removeNoPalletField(button) {
+                            var container = document.getElementById('noPalletContainer');
+                            container.removeChild(button.parentNode);
+                        }
                       </script>
-
-                        <!-- Modal -->
-                          <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modal-add-label">Add Pallet</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form action="{{ url('/pallet/store') }}" method="POST">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="form-group mb-3">
-                                                <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
-                                            </div>
-                                            <div class="form-group mb-3" id="noPalletContainer">
-                                                <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>
-                                                    <button class="btn btn-outline-dark" type="button" onclick="addNoPalletField()">+</button>
-                                                </div>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <input type="date" class="form-control" id="date" name="date" placeholder="Enter Dropdown Category" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <select name="destination" id="destination" class="form-control">
-                                                    <option value="">- Please Select Destination -</option>
-                                                    @foreach ($destinationPallet as $des)
-                                                    <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                          </div>
-
-                            <script>
-                              function addNoPalletField() {
-                                  var container = document.getElementById('noPalletContainer');
-                                  var inputGroup = document.createElement('div');
-                                  inputGroup.className = 'input-group mb-3';
-                                  inputGroup.innerHTML = '<input type="text" class="form-control" name="no_pallet[]" placeholder="Enter No. Pallet" required>' +
-                                      '<button class="btn btn-outline-dark" type="button" onclick="removeNoPalletField(this)">-</button>';
-                                  container.appendChild(inputGroup);
-                              }
-
-                              function removeNoPalletField(button) {
-                                  var container = document.getElementById('noPalletContainer');
-                                  container.removeChild(button.parentNode);
-                              }
-                            </script>
-
-
+                      
                         <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                           <div class="modal-dialog">
                               <div class="modal-content">
@@ -270,7 +391,7 @@
                     <th>No. Delivery</th>
                     <th>No. Pallet</th>
                     <th>Type Pallet</th>
-                    <th>Destination</th>
+                    <th>Storage</th>
                     <th>Date</th>
                     <th>Status</th>
                     @if(in_array(\Auth::user()->role, ['Super Admin', 'IT']))
@@ -294,12 +415,12 @@
                           @if($data->status == 1)
                               <!-- Button for active status -->
                               <button class="btn btn-success btn-sm">
-                                  New
+                                  Active
                               </button>
                           @else
                               <!-- Button for disposal status -->
                               <button class="btn btn-danger btn-sm">
-                                  <i class="fa-solid fa-x"></i> Expired
+                                  <i class="fa-solid fa-x"></i> Done
                               </button>
                           @endif
                         </td>
