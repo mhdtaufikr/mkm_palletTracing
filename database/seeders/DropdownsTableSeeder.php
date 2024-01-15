@@ -57,6 +57,13 @@ class DropdownsTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'category' => 'Destination',
+                'name_value' => 'KTBSP',
+                'code_format' => 'KTBSP',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'category' => 'Type Pallet',
                 'name_value' => 'Engine',
                 'code_format' => 'EG',
