@@ -307,7 +307,7 @@ class PalletController extends Controller
             } elseif ($searchBy === 'date' && $dateFrom && $dateTo) {
                 $query->whereBetween('date', [$dateFrom, $dateTo]);
             } elseif ($searchBy === 'storage' && $request->has('storage')) { // New condition for Storage
-                $query->where('destination', $request->storage);
+                $query->where('status', 1)->where('destination', $request->storage);
             }
         
 
