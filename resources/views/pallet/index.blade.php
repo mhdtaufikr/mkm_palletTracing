@@ -180,22 +180,19 @@
                                             <input type="text" class="form-control" id="no_delivery" name="no_delivery" placeholder="Enter No. Delivery" required>
                                         </div>
                                         <div class="form-group mb-3">
-                                            <select name="destination" id="destination" class="form-control">
-                                                <option value="">- Please Select Destination -</option>
-                                                @foreach ($destinationPallet as $des)
-                                                    <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                          <!-- Dynamic pallet dropdown will be added here -->
-                                          <div class="input-group mb-3" id="noPalletContainer">
-                                              <select name="no_pallet[]" class="form-control" required id="palletDropdown">
-                                                  <option value="">- Please Select Pallet -</option>
-                                                  <!-- Dynamic options will be added here -->
-                                              </select>
-                                              <button type="button" class="btn btn-success" onclick="addNoPalletField()" id="addButton" disabled>+</button>
-                                          </div>
+                                          <select name="destination" id="destination" class="form-control chosen-select" data-placeholder="Choose a Destination...">
+                                            <option value="">- Please Select Destination -</option>  
+                                            @foreach ($destinationPallet as $des)
+                                                  <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>
+                                      
+                                  
+                                      <div class="form-group mb-3">
+                                          <select name="no_pallet[]" id="palletDropdown" class="form-control chosen-select" data-placeholder="Choose a Pallet..." multiple>
+                                              <!-- Options will be added dynamically based on selected destination -->
+                                          </select>
                                       </div>
 
                                         <div class="form-group mb-3">
@@ -212,127 +209,74 @@
                       </div>
 
                       <script>
-                        // Reference to the main dropdown
-                        var mainPalletDropdown = document.querySelector('#noPalletContainer select');
-                        var palletDropdown = document.getElementById('palletDropdown');
-                        var addButton = document.getElementById('addButton');
+                        $(document).ready(function () {
+                            // Initialize Chosen for the main destination dropdown
+                            $('#destination').chosen();
+                    
+                            // Initialize Chosen for the dynamic pallet dropdown
+                            $('#palletDropdown').chosen();
+                    
+                            $('#destination').on('change', function () {
+                                var selectedDestination = $(this).val(); // Use val() instead of an array
 
-                        // Add event listener to the dropdown
-                          palletDropdown.addEventListener('change', function () {
-                              // Enable/disable the button based on whether a value is selected
-                              addButton.disabled = palletDropdown.value === '';
-                          });
-                        document.getElementById('destination').addEventListener('change', function () {
-                            var destination = this.value;
-                            if (destination) {
-                                // Make an Ajax request to fetch no_pallet values for the selected destination
-                                fetch('/getNoPallets/' + destination)
-                                    .then(response => response.json())
-                                    .then(data => updatePalletDropdown(data));
+                                updatePalletDropdown(selectedDestination);
+                            });
 
-                                // Fetch all no_pallet values (for main pallet dropdown)
-                                fetch('/getAllNoPallets/' + destination)
-                                    .then(response => response.json())
-                                    .then(data => updateMainPalletDropdown(data));
-                            } else {
-                                // Clear the pallet dropdown if no destination is selected
-                                updatePalletDropdown([]);
+                            // Function to update the dynamic pallet dropdown
+                            function updatePalletDropdown(selectedDestination) {
+                                // Clear previous options
+                                $('#palletDropdown').empty();
+
+                                // Add new options based on the selected destination
+                                if (selectedDestination) {
+                                    // Make an Ajax request to fetch no_pallet values for the selected destination
+                                    fetch('/getNoPallets/' + selectedDestination)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            // Add new options to the pallet dropdown
+                                            data.forEach(function (pallet) {
+                                                $('#palletDropdown').append('<option value="' + pallet + '">' + pallet + '</option>');
+                                            });
+
+                                            // Trigger Chosen update
+                                            $('#palletDropdown').trigger('chosen:updated');
+                                        });
+                                } else {
+                                    // If no destination is selected, clear the pallet dropdown
+                                    $('#palletDropdown').trigger('chosen:updated');
+                                }
                             }
+
+                            // Trigger Chosen update after adding options dynamically
+                            $('#palletDropdown').trigger('chosen:updated');
+
                         });
+                    </script>
 
-                        function addNoPalletField() {
-                            var container = document.getElementById('noPalletContainer');
-
-                            // Save the values of existing dropdowns
-                            var existingDropdowns = container.querySelectorAll('select');
-                            var existingValues = Array.from(existingDropdowns).map(function (dropdown) {
-                                return dropdown.value;
-                            });
-                            
-                            var inputGroup = document.createElement('div');
-                            inputGroup.className = 'input-group mt-3';
-
-                            var select = document.createElement('select');
-                            select.name = 'no_pallet[]';
-                            select.className = 'form-control';
-                            select.required = true;
-                            select.innerHTML = '<option value="">- Please Select Pallet -</option>';
-                            inputGroup.appendChild(select);
-
-                            var button = document.createElement('button');
-                            button.className = 'btn btn-danger';
-                            button.type = 'button';
-                            button.textContent = '-';
-                            button.onclick = function () {
-                                removeNoPalletField(button);
-                            };
-                            inputGroup.appendChild(button);
-
-                            container.appendChild(inputGroup);
-
-                            // Fetch no_pallet values for the selected destination
-                            var destination = document.getElementById('destination').value;
-                            if (destination) {
-                                // Fetch no_pallet values for the selected destination
-                                fetch('/getNoPallets/' + destination)
-                                    .then(response => response.json())
-                                    .then(data => updatePalletDropdown(data, select));
-                            } else {
-                                // Clear the new dropdown if no destination is selected
-                                updatePalletDropdown([], select);
-                            }
-
-                            // Update the new dropdown with existing values
-                            existingValues.forEach(function (value) {
-                                var option = document.createElement('option');
-                                option.value = value;
-                                option.text = value;
-                                select.appendChild(option);
-                            });
-                            addButton.disabled = false;
+                    <style>
+                      /* Adjust the Chosen container width */
+                        .chosen-container {
+                            width: 100% !important; /* Adjust the width as needed */
                         }
 
-                        function updateMainPalletDropdown(mainPallets) {
-                            // Clear previous options
-                            mainPalletDropdown.innerHTML = '<option value="">- Please Select Pallet -</option>';
-
-                            // Check if mainPallets is an array before iterating
-                            if (Array.isArray(mainPallets)) {
-                                // Add new options based on the fetched main_pallet values
-                                mainPallets.forEach(function (mainPallet) {
-                                    var option = document.createElement('option');
-                                    option.value = mainPallet;
-                                    option.text = mainPallet;
-                                    mainPalletDropdown.appendChild(option);
-                                });
-                            } else {
-                                console.error('Invalid data received for mainPallets:', mainPallets);
-                            }
+                        /* Adjust the Chosen dropdown width */
+                        .chosen-container .chosen-drop {
+                            width: 100% !important; /* Adjust the width as needed */
                         }
 
-                        function updatePalletDropdown(noPallets, palletDropdown) {
-                            // Clear previous options
-                            palletDropdown.innerHTML = '<option value="">- Please Select Pallet -</option>';
-
-                            // Check if noPallets is an array before iterating
-                            if (Array.isArray(noPallets)) {
-                                // Add new options based on the fetched no_pallet values
-                                noPallets.forEach(function (pallet) {
-                                    var option = document.createElement('option');
-                                    option.value = pallet;
-                                    option.text = pallet;
-                                    palletDropdown.appendChild(option);
-                                });
-                            } else {
-                                console.error('Invalid data received for noPallets:', noPallets);
-                            }
+                        /* Adjust the font size of the Chosen options */
+                        .chosen-container .chosen-results li {
+                            font-size: 14px !important; /* Adjust the font size as needed */
                         }
 
-                        function removeNoPalletField(button) {
-                            var container = document.getElementById('noPalletContainer');
-                            container.removeChild(button.parentNode);
+                        /* Adjust the font size of the Chosen selected option */
+                        .chosen-container .chosen-single span {
+                            font-size: 14px !important; /* Adjust the font size as needed */
                         }
-                      </script>
+
+                    </style>
+                    
+                    
                       
                         <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                           <div class="modal-dialog">

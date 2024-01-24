@@ -18,7 +18,7 @@ class PalletController extends Controller
     public function index()
         {
             // Fetch pallet data grouped by no_pallet
-            $palletData = Pallet::orderBy('created_at', 'desc')->where('status', '1')->get();
+            $palletData = [];
 
             // Fetch dropdown data
             $typePallet = Dropdown::where('category', 'Type Pallet')->get();

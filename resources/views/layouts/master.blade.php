@@ -36,6 +36,11 @@
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
 
+        <!-- Include Chosen CSS -->
+        <link href="{{asset('chosen/chosen.min.css')}}" rel="stylesheet" />
+
+        <!-- Include Chosen JS -->
+        <script src="{{asset('chosen/chosen.jquery.min.js')}}"></script>
 
 
 
