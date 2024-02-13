@@ -22,7 +22,7 @@
         <!-- Pie chart for 'Engine' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet Engine</div>
+                <div class="card-header text-dark">Pallet Engine Assy</div>
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="enginePieChart" width="100%" height="50"></canvas></div>
                 </div>
@@ -48,7 +48,7 @@
         <!-- Pie chart for 'Transmission' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet TM-Assy</div>
+                <div class="card-header text-dark">Pallet Transmission Assy</div>
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="transmissionPieChart" width="100%" height="50"></canvas></div>
                 </div>
@@ -72,7 +72,7 @@
         <!-- Pie chart for 'FA' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet FA</div>
+                <div class="card-header text-dark">Pallet Front Axle</div>
                 <div class="card-body">
                     <div class="chart-pie"><canvas id="faPieChart" width="100%" height="50"></canvas></div>
                 </div>
