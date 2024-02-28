@@ -24,7 +24,7 @@
                     </div>
                 </h6>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ url('/') }}">
+                <a class="dropdown-item" href="{{ url('/logout') }}">
                     <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                     Logout
                 </a>
