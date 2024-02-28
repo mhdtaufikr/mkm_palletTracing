@@ -13,7 +13,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
         <script src="{{ url('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js') }}"></script>
-    
+
          <!-- DataTables CSS -->
         <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
@@ -42,10 +42,13 @@
         <!-- Include Chosen JS -->
         <script src="{{asset('chosen/chosen.jquery.min.js')}}"></script>
 
+        <!-- Include Chart CSS -->
+        <script src="{{asset('canvasjs.min.js')}}"></script>
+
 
 
     </head>
-    
+
     <body class="nav-fixed">
         @include('layouts.includes._topbar')
             <div id="layoutSidenav">

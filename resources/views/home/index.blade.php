@@ -19,77 +19,26 @@
 <div class="container-xl px-4 mt-n10">
     <div class="row">
 
-        <!-- Pie chart for 'Engine' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet Engine Assy</div>
                 <div class="card-body">
-                    <div class="chart-pie"><canvas id="enginePieChart" width="100%" height="50"></canvas></div>
-                </div>
-                <div class="card-footer small text-muted">
-                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
-                    
-                    @foreach(json_decode($enginePieData, true) as $destination => $count)
-                    <div class="row">
-                        <div class="col-md-3">
-                            <p style="color: black">{{ $destination }}</p>
-                        </div>
-                        <div class="col-md-9">
-                            <p style="color: black">: {{ $count }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-
+                    <div id="PalletEngineAssy" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
 
-
-        <!-- Pie chart for 'Transmission' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet Transmission Assy</div>
                 <div class="card-body">
-                    <div class="chart-pie"><canvas id="transmissionPieChart" width="100%" height="50"></canvas></div>
-                </div>
-                <div class="card-footer small text-muted">
-                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
-
-                    @foreach(json_decode($transmissionPieData, true) as $destination => $count)
-                    <div class="row">
-                        <div class="col-md-3">
-                            <p style="color: black">{{ $destination }}</p>
-                        </div>
-                        <div class="col-md-9">
-                            <p style="color: black">: {{ $count }}</p>
-                        </div>
-                    </div>
-                    @endforeach
+                    <div id="PalletTransmissionAssy" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Pie chart for 'FA' -->
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header text-dark">Pallet Front Axle</div>
                 <div class="card-body">
-                    <div class="chart-pie"><canvas id="faPieChart" width="100%" height="50"></canvas></div>
-                </div>
-                <div class="card-footer small text-muted">
-                    <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
-
-                    @foreach(json_decode($faPieData, true) as $destination => $count)
-                        <div class="row">
-                            <div class="col-md-3">
-                                <p style="color: black">{{ $destination }}</p>
-                            </div>
-                            <div class="col-md-9">
-                                <p style="color: black">: {{ $count }}</p>
-                            </div>
-                        </div>
-                       
-                    @endforeach
+                    <div id="PalletFrontAxle" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
@@ -97,62 +46,6 @@
 
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Data for 'Engine' Pie Chart
-    var enginePieData = {!! $enginePieData !!};
-
-    // Data for 'Transmission' Pie Chart
-    var transmissionPieData = {!! $transmissionPieData !!};
-
-    // Data for 'FA' Pie Chart
-    var faPieData = {!! $faPieData !!};
-
-    // Mapping of destinations to colors
-    var destinationColors = {
-        'MKM': '#FF5733',
-        'KTBSP': '#FFC300',
-        'KRM': '#33FF57',
-        'TJU': '#3385FF',
-    };
-
-    // Initialize 'Engine' Pie Chart
-    var enginePieChart = new Chart(document.getElementById('enginePieChart').getContext('2d'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(enginePieData),
-            datasets: [{
-                data: Object.values(enginePieData),
-                backgroundColor: Object.keys(enginePieData).map(destination => destinationColors[destination]),
-            }],
-        },
-    });
-
-    // Initialize 'Transmission' Pie Chart
-    var transmissionPieChart = new Chart(document.getElementById('transmissionPieChart').getContext('2d'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(transmissionPieData),
-            datasets: [{
-                data: Object.values(transmissionPieData),
-                backgroundColor: Object.keys(transmissionPieData).map(destination => destinationColors[destination]),
-            }],
-        },
-    });
-
-    // Initialize 'FA' Pie Chart
-    var faPieChart = new Chart(document.getElementById('faPieChart').getContext('2d'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(faPieData),
-            datasets: [{
-                data: Object.values(faPieData),
-                backgroundColor: Object.keys(faPieData).map(destination => destinationColors[destination]),
-            }],
-        },
-    });
-</script>
 
 
 <script>
@@ -171,6 +64,79 @@
     document.getElementById('lblGreetings').innerHTML =
         '<b>' + greet + '</b> and welcome to Pallet Tracing!';
 </script>
+
+
+<script>
+    window.onload = function () {
+        var chartEngine = new CanvasJS.Chart("PalletEngineAssy", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+                text: "Pallet Engine Assy"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 25,
+                toolTipContent: "<b>{label}</b>: {y}",
+                showInLegend: "true",
+                legendText: "{label}",
+                indexLabelFontSize: 16,
+                indexLabel: "{label} - {y}",
+                indexLabelFontColor: "#000000", // Default color for index labels
+                dataPoints: {!! $enginePieData !!}
+            }]
+        });
+
+        var chartTransmission = new CanvasJS.Chart("PalletTransmissionAssy", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+                text: "Pallet Transmission Assy"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 25,
+                toolTipContent: "<b>{label}</b>: {y}",
+                showInLegend: "true",
+                legendText: "{label}",
+                indexLabelFontSize: 16,
+                indexLabel: "{label} - {y}",
+                indexLabelFontColor: "#000000", // Default color for index labels
+                dataPoints: {!! $transmissionPieData !!}
+            }]
+        });
+
+        var chartFrontAxle = new CanvasJS.Chart("PalletFrontAxle", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+                text: "Pallet Front Axle"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 25,
+                toolTipContent: "<b>{label}</b>: {y}",
+                showInLegend: "true",
+                legendText: "{label}",
+                indexLabelFontSize: 16,
+                indexLabel: "{label} - {y}",
+                indexLabelFontColor: "#000000", // Default color for index labels
+                dataPoints: {!! $faPieData !!}
+            }]
+        });
+
+        chartEngine.render();
+        chartTransmission.render();
+        chartFrontAxle.render();
+    }
+</script>
+
+
+
+
 
 </main>
 @endsection
