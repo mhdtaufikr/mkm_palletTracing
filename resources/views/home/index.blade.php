@@ -22,7 +22,7 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletEngineAssy" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletEngineAssy" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletTransmissionAssy" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletTransmissionAssy" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletFrontAxle" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletFrontAxle" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
