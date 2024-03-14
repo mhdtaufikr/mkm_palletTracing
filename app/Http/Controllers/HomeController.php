@@ -72,8 +72,9 @@ class HomeController extends Controller
         $query->whereRaw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) >= 15')
             ->where('status', 1);
     })
-    ->orderBy('days_since_last_movement', 'desc') // Order by days_since_last_movement in descending order
+    ->orderByDesc('days_since_last_movement') // Order by days_since_last_movement in descending order
     ->get();
+
 
     // Pass the data to the view
     return view('home.index', [
