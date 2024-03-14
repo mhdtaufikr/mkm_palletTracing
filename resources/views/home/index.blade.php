@@ -82,7 +82,7 @@
                                     <i class="fa-solid fa-x"></i> Done
                                 </button>
                             @endif</td>
-                            <td>{{ $data->days_since_last_movement }}</td>
+                            <td>{{ $data->days_since_last_movement }} Days</td>
                         </tr>
                         @endforeach
                     </tbody>
