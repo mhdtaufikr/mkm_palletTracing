@@ -69,7 +69,7 @@
                                     @endif
 
                                     <!--alert success -->
-                                    <h1 class="text-center font-weight-bold mb-4">CHECKSHEET SL - FRAME</h1>
+                                    <h1 class="text-center font-weight-bold mb-4">PALLET TRACING SYSTEM</h1>
 
                                     <!-- Login form-->
                                     <form action="{{ url('auth/login') }}" method="POST" enctype="multipart/form-data">
