@@ -69,7 +69,7 @@ class HomeController extends Controller
         \DB::raw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) AS days_since_last_movement')
     )
     ->where(function ($query) {
-        $query->whereRaw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) >= 15')
+        $query->whereRaw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) >= 20')
             ->where('status', 1);
     })
     ->orderByDesc('days_since_last_movement') // Order by days_since_last_movement in descending order
