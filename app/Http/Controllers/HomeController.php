@@ -58,12 +58,31 @@ class HomeController extends Controller
         ];
     }
 
+    $slowPallet = Pallet::select(
+        'id',
+        'no_delivery',
+        'no_pallet',
+        'type_pallet',
+        'destination',
+        'date',
+        'status',
+        \DB::raw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) AS days_since_last_movement')
+    )
+    ->where(function ($query) {
+        $query->whereRaw('DATEDIFF(CURDATE(), COALESCE(date, CURDATE())) >= 15')
+            ->where('status', 1);
+    })
+    ->orderBy('days_since_last_movement', 'desc') // Order by days_since_last_movement in descending order
+    ->get();
+
     // Pass the data to the view
     return view('home.index', [
         'enginePieData' => json_encode($enginePieData),
         'transmissionPieData' => json_encode($transmissionPieData),
         'faPieData' => json_encode($faPieData),
+        'slowPallet' => $slowPallet, // Add slowPallet data to the array
     ]);
+
 
 }
 

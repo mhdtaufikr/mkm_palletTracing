@@ -22,7 +22,7 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletEngineAssy" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletEngineAssy" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletTransmissionAssy" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletTransmissionAssy" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
@@ -38,13 +38,51 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div id="PalletFrontAxle" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
+                    <div id="PalletFrontAxle" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
                 </div>
             </div>
         </div>
 
 
     </div>
+
+    <div class="card">
+        <div  class="card-header">
+            <h3 style="margin-bottom: -10px" class="card-title">List of Slow Movement Pallet</h3>
+          </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tableUser" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No. Delivery</th>
+                            <th>No Pallet</th>
+                            <th>Type Pallet</th>
+                            <th>Storage</th>
+                            <th>Status</th>
+                            <th>Days Idle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $no=1; @endphp
+                        @foreach ($slowPallet as $data)
+                        <tr>
+                            <td>{{ $data->no_delivery }}</td>
+                            <td>{{ $data->no_pallet }}</td>
+                            <td>{{ $data->type_pallet }}</td>
+                            <td>{{ $data->destination }}</td>
+                            <td>{{ $data->status }}</td>
+                            <td>{{ $data->days_since_last_movement }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 
@@ -134,7 +172,16 @@
         chartFrontAxle.render();
     }
 </script>
-
+<script>
+    $(document).ready(function() {
+      var table = $("#tableUser").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      });
+    });
+  </script>
 
 
 
