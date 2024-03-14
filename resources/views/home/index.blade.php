@@ -71,7 +71,17 @@
                             <td>{{ $data->no_pallet }}</td>
                             <td>{{ $data->type_pallet }}</td>
                             <td>{{ $data->destination }}</td>
-                            <td>{{ $data->status }}</td>
+                            <td> @if($data->status == 1)
+                                <!-- Button for active status -->
+                                <button class="btn btn-success btn-sm">
+                                    Active
+                                </button>
+                            @else
+                                <!-- Button for disposal status -->
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fa-solid fa-x"></i> Done
+                                </button>
+                            @endif</td>
                             <td>{{ $data->days_since_last_movement }}</td>
                         </tr>
                         @endforeach
