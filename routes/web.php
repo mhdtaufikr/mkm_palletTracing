@@ -24,6 +24,7 @@ use App\Http\Controllers\PalletController;
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/auth/login', [AuthController::class, 'postLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
+Route::post('request/access', [AuthController::class, 'requestAccess']);
 
 
 // Add this route for the Ajax request
@@ -52,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
      Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:IT']);
      Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update'])->middleware(['checkRole:IT']);
      Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete'])->middleware(['checkRole:IT']);
- 
+
      //Rules Controller
      Route::get('/rule', [RulesController::class, 'index'])->middleware(['checkRole:IT']);
      Route::post('/rule/store', [RulesController::class, 'store'])->middleware(['checkRole:IT']);
