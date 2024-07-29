@@ -28,7 +28,7 @@ class SendPalletSummaryEmails extends Command
                         ->orderBy('no_delivery')
                         ->get();
 
-        Mail::to('muhammad.taufik@ptmkm.co.id')->send(new PalletTransactionSummary($summaries));
+        Mail::to('aji.bayu@ptmkm.co.id')->send(new PalletTransactionSummary($summaries));
 
         $this->info('Pallet transaction summary emails have been sent.');
     }
