@@ -48,84 +48,76 @@ class PalletController extends Controller
             $duplicates = array_diff_assoc($request->input('no_pallet'), array_unique($request->input('no_pallet')));
 
             if (!empty($duplicates)) {
-                // There are duplicate values, rollback the transaction
-                return redirect()->route('pallet.index')->with('failed', 'Duplicate entry for pallet NO.')->withInput();
+                return redirect()->route('pallet.index')
+                    ->with('failed', 'Duplicate entry for pallet NO.')
+                    ->withInput();
             }
 
-            // Wrap the operation in a database transaction
+            // Check if a record with the same no_delivery exists before starting the transaction
+            $existingDelivery = Pallet::where('no_delivery', $request->input('no_delivery'))->first();
+
+            if ($existingDelivery) {
+                return redirect()->route('pallet.index')
+                    ->with('failed', 'No delivery already exists')
+                    ->withInput();
+            }
+
+            // Begin the database transaction
             DB::beginTransaction();
 
             try {
-                // Check if a record with the same no_delivery exists
-                $existingDelivery = Pallet::where('no_delivery', $request->input('no_delivery'))->first();
-
-                if ($existingDelivery) {
-                    // Rollback the transaction and return with an error message
-                    DB::rollBack();
-                    return redirect()->route('pallet.index')->with('failed', 'No delivery already exists')->withInput();
-                }
-
-                // Create an array to store pallet data
                 $palletsData = [];
 
                 // Iterate through each "No. Pallet" value and create/update Pallet instances
                 foreach ($request->input('no_pallet') as $noPallet) {
-                    // Validate each no_pallet value
-                    $validationRules = [
-                        'no_pallet' => 'required|string|max:255',
-                    ];
-
-                    $validationData = [
-                        'no_pallet' => $noPallet,
-                    ];
-
-                    $validator = Validator::make($validationData, $validationRules);
+                    // Validate the no_pallet value
+                    $validator = Validator::make(
+                        ['no_pallet' => $noPallet],
+                        ['no_pallet' => 'required|string|max:255']
+                    );
 
                     if ($validator->fails()) {
-                        // Validation failed for this row, rollback the transaction
                         DB::rollBack();
-                        return redirect()->route('pallet.index')->with('failed', 'Validation failed for one or more rows')->withInput();
+                        return redirect()->route('pallet.index')
+                            ->with('failed', 'Validation failed for one or more rows')
+                            ->withInput();
                     }
 
-                    // Check if a record with the same no_pallet exists
-                    $existingPallet = Pallet::where('no_pallet', $noPallet)->where('status', '1')->first();
+                    $existingPallet = Pallet::where('no_pallet', $noPallet)
+                        ->where('status', '1')
+                        ->first();
 
                     if ($existingPallet) {
-                        // Check for destination validation against the old destination
                         $validDestination = in_array($request->input('destination'), ['TJU', 'KRM', 'MKM', 'KTBSP']);
 
                         if (!$validDestination || $request->input('destination') === $existingPallet->destination) {
-                            // Destination validation failed, rollback the transaction
                             DB::rollBack();
-                            return redirect()->route('pallet.index')->with('failed', 'Invalid destination')->withInput();
+                            return redirect()->route('pallet.index')
+                                ->with('failed', 'Invalid destination')
+                                ->withInput();
                         }
 
-                        // Additional destination movement validations
-                        $oldDestination = $existingPallet ? $existingPallet->destination : null;
+                        $oldDestination = $existingPallet->destination;
 
-                        // Define the conditions for invalid destination movement
                         $invalidConditions = [
                             'KRM' => ['TJU', 'KTBSP'],
                             'TJU' => ['KRM', 'KTBSP'],
                             'KTBSP' => ['KRM', 'TJU'],
-                            'MKM' => [], // MKM can be moved to any destination
+                            'MKM' => [], // MKM can move to any destination
                         ];
 
-                        // Check if the new destination is in the list of invalid destinations for the old destination
                         if ($oldDestination && in_array($request->input('destination'), $invalidConditions[$oldDestination])) {
-                            // Destination validation failed, rollback the transaction
                             DB::rollBack();
-                            return redirect()->route('pallet.index')->with('failed', 'Invalid destination')->withInput();
+                            return redirect()->route('pallet.index')
+                                ->with('failed', 'Invalid destination')
+                                ->withInput();
                         }
 
-                        // Update the existing record's status to 0
                         $existingPallet->update(['status' => 0]);
                     }
 
-                    // Derive type_pallet from the first two characters of no_pallet
                     $typePallet = $this->getTypePalletFromNoPallet($noPallet);
 
-                    // Create a new Pallet with status 1
                     $palletsData[] = [
                         'no_delivery' => $request->input('no_delivery'),
                         'date' => $request->input('date'),
@@ -138,20 +130,21 @@ class PalletController extends Controller
                     ];
                 }
 
-                // Insert the pallets data into the database
+                // Insert pallets into the database
                 Pallet::insert($palletsData);
 
-                // Commit the transaction
                 DB::commit();
 
-                // Optionally, you can return a response or redirect to another page
-                return redirect()->route('pallet.index')->with('status', 'Pallets created/updated successfully');
+                return redirect()->route('pallet.index')
+                    ->with('status', 'Pallets created/updated successfully');
             } catch (\Exception $e) {
-                // Something went wrong, rollback the transaction and handle the error
                 DB::rollBack();
-                return redirect()->route('pallet.index')->with('failed', 'An error occurred while saving the data')->withInput();
+                return redirect()->route('pallet.index')
+                    ->with('failed', 'An error occurred while saving the data')
+                    ->withInput();
             }
         }
+
 
 
     /**
