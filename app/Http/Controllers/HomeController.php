@@ -35,6 +35,9 @@ class HomeController extends Controller
     $enginePieData = [];
     $transmissionPieData = [];
     $faPieData = [];
+    $differentialCasePieData = [];
+    $flangeCompanionPieData = [];
+    $frontAxleAssyPieData = [];
 
     // Loop through the counts for each pallet type and generate dataPoints
     foreach ($counts['Engine'] ?? [] as $destination => $count) {
@@ -58,6 +61,28 @@ class HomeController extends Controller
         ];
     }
 
+    // New pallet types
+    foreach ($counts['Differential Case'] ?? [] as $destination => $count) {
+        $differentialCasePieData[] = [
+            'y' => $count,
+            'label' => $destination,
+        ];
+    }
+
+    foreach ($counts['Flange Companion'] ?? [] as $destination => $count) {
+        $flangeCompanionPieData[] = [
+            'y' => $count,
+            'label' => $destination,
+        ];
+    }
+
+    foreach ($counts['Front Axle Assy'] ?? [] as $destination => $count) {
+        $frontAxleAssyPieData[] = [
+            'y' => $count,
+            'label' => $destination,
+        ];
+    }
+
     $slowPallet = Pallet::select(
         'id',
         'no_delivery',
@@ -75,16 +100,17 @@ class HomeController extends Controller
     ->orderByDesc('days_since_last_movement') // Order by days_since_last_movement in descending order
     ->get();
 
-
     // Pass the data to the view
     return view('home.index', [
         'enginePieData' => json_encode($enginePieData),
         'transmissionPieData' => json_encode($transmissionPieData),
         'faPieData' => json_encode($faPieData),
+        'differentialCasePieData' => json_encode($differentialCasePieData),
+        'flangeCompanionPieData' => json_encode($flangeCompanionPieData),
+        'frontAxleAssyPieData' => json_encode($frontAxleAssyPieData),
         'slowPallet' => $slowPallet, // Add slowPallet data to the array
     ]);
-
-
 }
+
 
 }

@@ -317,23 +317,34 @@ class PalletController extends Controller
           // Fetch all no_pallet values based on destination and status
           $allNoPallets = Pallet::where('status', 1);
 
-          // Apply additional conditions based on the destination
-          if ($destination == 'TJU') {
+            // Apply additional conditions based on the destination
+            if ($destination == 'TJU') {
+                $allNoPallets->where(function ($query) use ($destination) {
+                    $query->where('destination', '!=', $destination)
+                        ->where('destination', 'MKM')
+                        ->whereNotIn('type_pallet', ['Differential Case', 'Flange Companion']); // Excludes certain type_pallets
+                });
+            } elseif ($destination == 'KRM') {
+                $allNoPallets->where(function ($query) use ($destination) {
+                    $query->where('destination', '!=', $destination)
+                        ->where('destination', 'MKM')
+                        ->whereNotIn('type_pallet', ['Differential Case', 'Flange Companion']); // Excludes certain type_pallets
+                });
+            }
+            // Additional destination conditions can be similarly updated
+            elseif ($destination == 'KTBSP') {
               $allNoPallets->where(function ($query) use ($destination) {
                   $query->where('destination', '!=', $destination)
                       ->Where('destination','MKM');
               });
-          } elseif ($destination == 'KRM') {
-              $allNoPallets->where(function ($query) use ($destination) {
-                  $query->where('destination', '!=', $destination)
-                      ->Where('destination','MKM');
-              });
-          } elseif ($destination == 'KTBSP') {
-              $allNoPallets->where(function ($query) use ($destination) {
-                  $query->where('destination', '!=', $destination)
-                      ->Where('destination','MKM');
-              });
-          } elseif ($destination == 'MKM') {
+          }elseif ($destination == 'IGP') {
+            $allNoPallets->where(function ($query) use ($destination) {
+                $query->where('destination', '!=', $destination)
+                      ->where('destination', 'MKM')
+                      ->whereIn('type_pallet', ['Differential Case', 'Flange Companion']); // Adds the type_pallet filter
+            });
+        }
+          elseif ($destination == 'MKM') {
               $allNoPallets->where('destination', '!=', $destination);
           }
 

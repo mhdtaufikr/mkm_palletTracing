@@ -42,6 +42,30 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="PalletDifferentialCase" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="PalletFlangeCompanion" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="PalletFrontAxleAssy" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
+                </div>
+            </div>
+        </div>
+
+
 
 
     </div>
@@ -177,9 +201,72 @@
             }]
         });
 
+         // Chart for Differential Case
+    var chartDifferentialCase = new CanvasJS.Chart("PalletDifferentialCase", {
+        theme: "light2",
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Pallet Differential Case"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 25,
+            toolTipContent: "<b>{label}</b>: {y}",
+            showInLegend: "true",
+            legendText: "{label}",
+            indexLabelFontSize: 16,
+            indexLabel: "{label} - {y}",
+            dataPoints: {!! $differentialCasePieData !!}
+        }]
+    });
+
+    // Chart for Flange Companion
+    var chartFlangeCompanion = new CanvasJS.Chart("PalletFlangeCompanion", {
+        theme: "light2",
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Pallet Flange Companion"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 25,
+            toolTipContent: "<b>{label}</b>: {y}",
+            showInLegend: "true",
+            legendText: "{label}",
+            indexLabelFontSize: 16,
+            indexLabel: "{label} - {y}",
+            dataPoints: {!! $flangeCompanionPieData !!}
+        }]
+    });
+     // Chart for Front Axle Assy
+     var chartFrontAxleAssy = new CanvasJS.Chart("PalletFrontAxleAssy", {
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Pallet Front Axle Assy"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 25,
+            toolTipContent: "<b>{label}</b>: {y}",
+            showInLegend: "true",
+            legendText: "{label}",
+            indexLabelFontSize: 16,
+            indexLabel: "{label} - {y}",
+            indexLabelFontColor: "#000000", // Default color for index labels
+            dataPoints: {!! $frontAxleAssyPieData !!} // Ensure the data is correctly injected here
+        }]
+    });
+
         chartEngine.render();
         chartTransmission.render();
         chartFrontAxle.render();
+        chartDifferentialCase.render();
+        chartFlangeCompanion.render();
+        chartFrontAxleAssy.render();
     }
 </script>
 <script>
