@@ -26,12 +26,12 @@ Route::post('/auth/login', [AuthController::class, 'postLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('request/access', [AuthController::class, 'requestAccess']);
 
+/* Route::get('/mail/ok', [AuthController::class, 'mail']); */
 
 // Add this route for the Ajax request
 Route::get('/getNoPallets/{destination}',  [PalletController::class, 'getNoPallets']);
 // Update the route for the Ajax request to fetch all no_pallet values
 Route::get('/getAllNoPallets/{destination}',  [PalletController::class, 'getAllNoPallets']);
-
 
 
 

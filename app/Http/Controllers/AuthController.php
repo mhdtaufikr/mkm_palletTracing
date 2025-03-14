@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Dropdown;
 use App\Mail\AccessRequestMail;
 use Illuminate\Support\Facades\Mail;
+/* use DB;
+use App\Mail\TaxReturnNotification; */
 
 
 class AuthController extends Controller
@@ -71,4 +73,61 @@ class AuthController extends Controller
         // Optionally, you can flash a success message or redirect to a specific page
         return back()->with('statusLogin', 'Your request has been submitted.');
     }
+
+   /*  public function mail() {
+        set_time_limit(300); // sets the time limit to 300 seconds
+
+        // Fetch up to 100 employees from the database where email is not null and flag is null
+        $employees = DB::table('employees')
+                        ->whereNotNull('email')
+                        ->whereNull('flag')  // Selects only employees whose flag is null
+                        ->limit(100)
+                        ->get();
+
+        // Base path where the files are stored
+        $basePath = 'C:\\xampp\\htdocs\\mkm_palletTracing\\public\\pdf\\';
+
+        // Use a variable to collect response messages
+        $response = [];
+
+        foreach ($employees as $employee) {
+            $filePath = $basePath . $employee->nama_file;
+
+            if (file_exists($filePath)) {
+                try {
+                    // Send email
+                    Mail::to($employee->email)
+                        ->send(new TaxReturnNotification((object) [
+                            'nama_file' => $employee->nama_file,
+                            'file_path' => $filePath
+                        ]));
+
+                    // Update the flag to '1' if email sent
+                    DB::table('employees')
+                        ->where('id', $employee->id)
+                        ->update(['flag' => '1']);
+
+                    // Add successful message for this employee
+                    $response[] = "Email successfully sent to: " . $employee->email;
+                } catch (\Exception $e) {
+                    // Add error message for this employee
+                    $response[] = "Failed to send email to: " . $employee->email . " Error: " . $e->getMessage();
+                }
+            } else {
+                // File does not exist
+                $response[] = "File does not exist for: " . $employee->email;
+            }
+        }
+
+        // Return JSON response with all messages
+        return response()->json(['messages' => $response], 200);
+    } */
+
+
+
+
+
+
 }
+
+
