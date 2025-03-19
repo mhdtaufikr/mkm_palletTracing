@@ -119,7 +119,6 @@ class PalletController extends Controller
                     }
 
                     $typePallet = $this->getTypePalletFromNoPallet($noPallet);
-
                     $palletsData[] = [
                         'no_delivery' => $request->input('no_delivery'),
                         'date' => $request->input('date'),
@@ -158,12 +157,15 @@ class PalletController extends Controller
     private function getTypePalletFromNoPallet($noPallet)
     {
         $prefixMappings = [
-            'EG' => 'Engine',
-            'FA' => 'FA',
-            'TM' => 'TM-Assy',
+            'EG-' => 'Engine',
+            'FA-' => 'FA',
+            'TM-' => 'TM-Assy',
+            'FAA' => 'Front Axle Assy',
+            'DC-' => 'Differential Case',
+            'FC-' => 'Flange Companion',
         ];
 
-        $palletPrefix = substr($noPallet, 0, 2);
+        $palletPrefix = substr($noPallet, 0, 3);
 
         return $prefixMappings[$palletPrefix] ?? null;
     }
