@@ -88,7 +88,7 @@ class PalletController extends Controller
                         ->first();
 
                     if ($existingPallet) {
-                        $validDestination = in_array($request->input('destination'), ['TJU', 'KRM', 'MKM', 'KTBSP']);
+                        $validDestination = in_array($request->input('destination'), ['TJU', 'KRM', 'MKM', 'KTBSP','IGP']);
 
                         if (!$validDestination || $request->input('destination') === $existingPallet->destination) {
                             DB::rollBack();
@@ -99,11 +99,13 @@ class PalletController extends Controller
 
                         $oldDestination = $existingPallet->destination;
 
+                      // Define the conditions for invalid destination movement
                         $invalidConditions = [
-                            'KRM' => ['TJU', 'KTBSP'],
-                            'TJU' => ['KRM', 'KTBSP'],
-                            'KTBSP' => ['KRM', 'TJU'],
-                            'MKM' => [], // MKM can move to any destination
+                            'KRM'   => ['TJU', 'KTBSP','IGP'],  // Cannot move directly to TJU or KTBSP from KRM
+                            'TJU'   => ['KRM', 'KTBSP','IGP'],  // Cannot move directly to KRM or KTBSP from TJU
+                            'KTBSP' => ['KRM', 'TJU','IGP'],    // Cannot move directly to KRM or TJU from KTBSP
+                            'MKM'   => [],                // MKM can be moved to any destination
+                            'IGP'   => ['TJU','KRM', 'KTBSP'],           // Example: Cannot move directly to TJU from IGP
                         ];
 
                         if ($oldDestination && in_array($request->input('destination'), $invalidConditions[$oldDestination])) {
