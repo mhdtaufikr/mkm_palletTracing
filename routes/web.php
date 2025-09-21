@@ -24,13 +24,14 @@ use App\Http\Controllers\PalletController;
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/auth/login', [AuthController::class, 'postLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
+Route::post('request/access', [AuthController::class, 'requestAccess']);
 
+/* Route::get('/mail/ok', [AuthController::class, 'mail']); */
 
 // Add this route for the Ajax request
 Route::get('/getNoPallets/{destination}',  [PalletController::class, 'getNoPallets']);
 // Update the route for the Ajax request to fetch all no_pallet values
 Route::get('/getAllNoPallets/{destination}',  [PalletController::class, 'getAllNoPallets']);
-
 
 
 
@@ -52,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
      Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:IT']);
      Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update'])->middleware(['checkRole:IT']);
      Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete'])->middleware(['checkRole:IT']);
- 
+
      //Rules Controller
      Route::get('/rule', [RulesController::class, 'index'])->middleware(['checkRole:IT']);
      Route::post('/rule/store', [RulesController::class, 'store'])->middleware(['checkRole:IT']);

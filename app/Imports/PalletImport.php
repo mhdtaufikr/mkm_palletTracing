@@ -39,9 +39,9 @@ class PalletImport implements ToCollection, WithHeadingRow
                 }
 
                 // Additional validation for the first two characters of no_pallet
-                $validPrefixes = ['EG', 'FA', 'TM'];
-                $palletPrefix = substr($row['no_pallet'], 0, 2);
-              
+                $validPrefixes = ['EG-', 'FA-', 'TM-','FAA','DC-','FC-'];
+                $palletPrefix = substr($row['no_pallet'], 0,3);
+
                 if (!in_array($palletPrefix, $validPrefixes)) {
                     // Prefix validation failed, rollback the transaction
                     DB::rollBack();
@@ -54,15 +54,18 @@ class PalletImport implements ToCollection, WithHeadingRow
             foreach ($rows as $row) {
                 // Import logic for each row
                 $checkExistingPallets = Pallet::where('no_pallet', $row['no_pallet'])->get();
-                $palletPrefix = substr($row['no_pallet'], 0, 2);
+                $palletPrefix = substr($row['no_pallet'], 0, 3);
                 $typePalletMap = [
-                    'EG' => 'Engine',
-                    'FA' => 'FA',
-                    'TM' => 'TM-Assy',
+                    'EG-' => 'Engine',
+                    'FA-' => 'FA',
+                    'TM-' => 'TM-Assy',
+                    'FAA' => 'Front Axle Assy',
+                    'DC-' => 'Differential Case',
+                    'FC-' => 'Flange Companion',
                 ];
                 if ($checkExistingPallets->isEmpty()) {
                     // Determine type_pallet based on the first two characters of no_pallet
-                   
+
 
                     // Create a new Pallet with status 1
                     Pallet::create([
@@ -84,14 +87,16 @@ class PalletImport implements ToCollection, WithHeadingRow
                         ->where('status', 1)
                         ->value('destination');
 
-                    // Define the conditions for invalid destination movement
+                  // Define the conditions for invalid destination movement
                     $invalidConditions = [
-                        'KRM' => ['TJU', 'KTBSP'],
-                        'TJU' => ['KRM', 'KTBSP'],
-                        'KTBSP' => ['KRM', 'TJU'],
-                        'MKM' => [], // MKM can be moved to any destination
+                        'KRM'   => ['TJU', 'KTBSP','IGP'],  // Cannot move directly to TJU or KTBSP from KRM
+                        'TJU'   => ['KRM', 'KTBSP','IGP'],  // Cannot move directly to KRM or KTBSP from TJU
+                        'KTBSP' => ['KRM', 'TJU','IGP'],    // Cannot move directly to KRM or TJU from KTBSP
+                        'MKM'   => [],                // MKM can be moved to any destination
+                        'IGP'   => ['TJU','KRM', 'KTBSP'],           // Example: Cannot move directly to TJU from IGP
                     ];
-                    
+
+
 
                     // Check if the new destination is in the list of invalid destinations for the old destination
                     if (in_array($row['destination'], $invalidConditions[$oldDestination])) {
