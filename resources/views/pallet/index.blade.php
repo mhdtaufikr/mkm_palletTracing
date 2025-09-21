@@ -9,7 +9,7 @@
         </div>
     </header>
 <!-- Main page content-->
-<div class="container-xl px-4 mt-n10">       
+<div class="container-xl px-4 mt-n10">
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -32,41 +32,41 @@
               <div class="card-header">
                 <h3 class="card-title">List of Pallet</h3>
               </div>
-              
+
             <!-- /.card-header -->
             <div class="card-body">
               <div class="row">
                 <div class="mb-3 col-sm-6">
                   <form action="{{ url('/pallet/search') }}" method="POST" id="searchForm">
                     @csrf <!-- Include CSRF token for security -->
-                
+
                     <!-- Search Form -->
                     <div class="input-group input-group-sm">
                         <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs()">
-                          <option value="">Search By</option>  
+                          <option value="">Search By</option>
                           <option value="date">Date</option>
                             <option value="no_pallet">No Pallet</option>
                             <option value="storage">Storage</option>
                         </select>
-                
+
                         <!-- No Pallet Input -->
                         <input name="palletNo" type="text" class="form-control" id="searchNoPallet" placeholder="Enter search term" style="display: none;">
-                
+
                         <!-- Date Inputs -->
                         <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date" style="display: none;">
                         <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date" style="display: none;">
-                
+
                         <!-- Storage Input -->
                         <select class="form-control" name="storage" id="searchStorage" style="display: none;">
                             @foreach ($destinationPallet as $storage)
                                 <option value="{{ $storage->name_value }}">{{ $storage->name_value }}</option>
                             @endforeach
                         </select>
-                
+
                         <button class="btn btn-dark btn-sm" type="submit" onclick="search()">Search</button>
                     </div>
                 </form>
-                
+
                    <script>
                     function toggleSearchInputs() {
                         var searchBy = document.getElementById('searchBy').value;
@@ -117,7 +117,7 @@
                     }
                 </script>
 
-                
+
               </div>
             </div>
               <div class="row">
@@ -127,16 +127,16 @@
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>{{ session('status') }}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div> 
+                      </div>
                     @endif
 
                     @if (session('failed'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                       <strong>{{ session('failed') }}</strong>
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div> 
+                    </div>
                   @endif
-                    
+
                       <!--alert success -->
                       <!--validasi form-->
                         @if (count($errors)>0)
@@ -152,8 +152,8 @@
                         @endif
                       <!--end validasi form-->
                     </div>
-            
-              
+
+
                 <div class="table-responsive">
                   <div class="mb-3 col-sm-6">
                     <!-- Search Form -->
@@ -181,14 +181,14 @@
                                         </div>
                                         <div class="form-group mb-3">
                                           <select name="destination" id="destination" class="form-control chosen-select" data-placeholder="Choose a Destination...">
-                                            <option value="">- Please Select Destination -</option>  
+                                            <option value="">- Please Select Destination -</option>
                                             @foreach ($destinationPallet as $des)
                                                   <option value="{{ $des->name_value }}">{{ $des->name_value }}</option>
                                               @endforeach
                                           </select>
                                       </div>
-                                      
-                                  
+
+
                                       <div class="form-group mb-3">
                                           <select name="no_pallet[]" id="palletDropdown" class="form-control chosen-select" data-placeholder="Choose a Pallet..." multiple>
                                               <!-- Options will be added dynamically based on selected destination -->
@@ -212,40 +212,38 @@
                         $(document).ready(function () {
                             // Initialize Chosen for the main destination dropdown
                             $('#destination').chosen();
-                    
+
                             // Initialize Chosen for the dynamic pallet dropdown
                             $('#palletDropdown').chosen();
-                    
+
                             $('#destination').on('change', function () {
                                 var selectedDestination = $(this).val(); // Use val() instead of an array
 
                                 updatePalletDropdown(selectedDestination);
                             });
 
-                            // Function to update the dynamic pallet dropdown
                             function updatePalletDropdown(selectedDestination) {
-                                // Clear previous options
-                                $('#palletDropdown').empty();
+    $('#palletDropdown').empty();
 
-                                // Add new options based on the selected destination
-                                if (selectedDestination) {
-                                    // Make an Ajax request to fetch no_pallet values for the selected destination
-                                    fetch('/getNoPallets/' + selectedDestination)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            // Add new options to the pallet dropdown
-                                            data.forEach(function (pallet) {
-                                                $('#palletDropdown').append('<option value="' + pallet + '">' + pallet + '</option>');
-                                            });
+    if (selectedDestination) {
+        // ambil url route dari blade, lalu ganti :destination dengan value JS
+        var url = "{{ route('getNoPallets', ':destination') }}";
+        url = url.replace(':destination', selectedDestination);
 
-                                            // Trigger Chosen update
-                                            $('#palletDropdown').trigger('chosen:updated');
-                                        });
-                                } else {
-                                    // If no destination is selected, clear the pallet dropdown
-                                    $('#palletDropdown').trigger('chosen:updated');
-                                }
-                            }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(function (pallet) {
+                    $('#palletDropdown').append('<option value="' + pallet + '">' + pallet + '</option>');
+                });
+
+                $('#palletDropdown').trigger('chosen:updated');
+            });
+    } else {
+        $('#palletDropdown').trigger('chosen:updated');
+    }
+}
+
 
                             // Trigger Chosen update after adding options dynamically
                             $('#palletDropdown').trigger('chosen:updated');
@@ -275,9 +273,9 @@
                         }
 
                     </style>
-                    
-                    
-                      
+
+
+
                         <div class="modal fade" id="modal-import" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                           <div class="modal-dialog">
                               <div class="modal-content">
@@ -310,7 +308,7 @@
                               </div>
                           </div>
                       </div>
-                </div> 
+                </div>
                 <script>
                   $(document).ready(function () {
                       var table = $("#tableUser").DataTable({
@@ -378,7 +376,7 @@
                             </button>
                               <button title="Delete Pallet" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                                   <i class="fas fa-trash-alt"></i>
-                                </button>   
+                                </button>
                             </td>
                         @endif
                     </tr>
@@ -449,7 +447,7 @@
                                         @endforeach
                                       </select>
                                 </div>
-                                
+
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
@@ -500,7 +498,7 @@
                           <form action="{{ url('') }}" enctype="multipart/form-data" method="GET">
                           @csrf
                           <div class="modal-body">
-                            
+
                           </div>
                           <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-dark btn-default" data-dismiss="modal">Close</button>
@@ -534,7 +532,7 @@
   <!-- /.content-wrapper -->
 </div>
 
-     
+
 </main>
 <!-- For Datatables -->
 
